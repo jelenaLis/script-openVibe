@@ -1,1 +1,3 @@
 *.pyc
+signals/
+*.cfg
