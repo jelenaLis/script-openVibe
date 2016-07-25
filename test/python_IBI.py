@@ -103,14 +103,16 @@ class MyOVBox(OVBox):
 
       ## deal with classifier input
       for chunk_index in range(len(self.input[1])):
-			#passing on the header to the output
-			if(type(self.input[1][chunk_index]) == OVStreamedMatrixHeader):
-				self.input[1].pop()
-			#biasing the input signal to output it
-			elif(type(self.input[1][chunk_index]) == OVStreamedMatrixBuffer):
-				inputChunk = self.input[1].pop()
-                 if self.debug:
-                     print "chunk:", inputChunk 
+            #passing on the header to the output
+            if(type(self.input[1][chunk_index]) == OVStreamedMatrixHeader):
+                self.input[1].pop()
+            #biasing the input signal to output it
+            elif(type(self.input[1][chunk_index]) == OVStreamedMatrixBuffer):
+                inputChunk = self.input[1].pop()
+                # FIXME: nothing proof!
+                self.lastValue = inputChunk[-1]
+                if self.debug:
+                    print "chunk:", inputChunk 
       
       # in case we need to automatically change BPM 'cause of min/max
       self.updateValues()
