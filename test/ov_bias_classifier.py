@@ -3,6 +3,7 @@ from Tkinter import *
 
 # Bias (or not) input from classifier
 # FIXME: might not work if input actual frequency higher than box frequency
+# NB: based on IBI script from Tobe
 
 class MyOVBox(OVBox):
    def __init__(self):
@@ -22,6 +23,12 @@ class MyOVBox(OVBox):
       self.lastOrigValue = -1
       self.lastBiaisedValue = -1
       self.debug = False
+      self.classAStartStim = 0
+      self.classAStopStim = 0
+      self.classBStartStim = 0
+      self.classBStopStim = 0
+      # commandes only during trials
+      self.enableOutput = False
 
    # this time we also re-define the initialize method to directly prepare the header and the first data chunk
    def initialize(self):
@@ -35,7 +42,13 @@ class MyOVBox(OVBox):
         print "Couldn't find debug flag"
       else:
         self.debug=debug
-        
+
+      # we want our stims
+      self.classAStartStim = OpenViBE_stimulation[self.setting['Class A start']]
+      self.classAStopStim = OpenViBE_stimulation[self.setting['Class A stop']]
+      self.classBStartStim = OpenViBE_stimulation[self.setting['Class B start']]
+      self.classBStopStim = OpenViBE_stimulation[self.setting['Class B stop']]
+
       # settings are retrieved in the dictionary
       self.samplingFrequency = int(self.setting['Sampling frequency'])
       self.epochSampleCount = int(self.setting['Generated epoch sample count'])
@@ -78,10 +91,20 @@ class MyOVBox(OVBox):
    def trigger(self, stim):
      if self.debug:
        print "Got stim: ", stim.identifier, " date: ", stim.date, " duration: ", stim.duration
-     self.newStimDate = stim.date
+     if stim.identifier == self.classAStartStim or stim.identifier == self.classBStartStim:
+       self.enableOutput = True
+       if self.debug:
+         print "output on"
+     elif stim.identifier == self.classAStopStim or stim.identifier == self.classBStopStim:
+       self.enableOutput =  False
+       if self.debug:
+         print "output off"
 
    def biasIt(self):
-     self.lastBiasValue = self.lastOrigValue + 1
+     if self.enableOutput:   
+       self.lastBiasValue = self.lastOrigValue + 1
+     else:
+       self.lastBiasValue = 0
      
    # called by process each loop or by trigger when got new stimulation;  update IBI/BPM
    def updateValues(self):
@@ -120,8 +143,6 @@ class MyOVBox(OVBox):
                 # using last value of current input
                 # FIXME: nothing proof!
                 self.lastOrigValue = inputChunk[-1]
-                if self.debug:
-                    print "input chunk:", inputChunk 
 
       # compute bias, copy values to output
       self.biasIt()
