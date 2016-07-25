@@ -18,13 +18,15 @@ class MyOVBox(OVBox):
       self.timeBuffer = list()
       self.signalBuffer = None
       self.signalHeader = None
-      self.lastValue = -1
+      # two variables for two channels...
+      self.lastOrigValue = -1
+      self.lastBiaisedValue = -1
       self.debug = False
 
    # this time we also re-define the initialize method to directly prepare the header and the first data chunk
    def initialize(self):
-      # one channel, biaised classifier output 
-      self.channelCount = 1
+      # two channels, original classifier output  and biaised output
+      self.channelCount = 2
       
       # try get debug flag from GUI
       try:
@@ -39,7 +41,8 @@ class MyOVBox(OVBox):
       self.epochSampleCount = int(self.setting['Generated epoch sample count'])
       
       #creation of the signal header
-      self.dimensionLabels.append('class') 
+      self.dimensionLabels.append('orig_classifier') 
+      self.dimensionLabels.append('biaised_classifier') 
       self.dimensionLabels += self.epochSampleCount*['']
       self.dimensionSizes = [self.channelCount, self.epochSampleCount]
       self.signalHeader = OVSignalHeader(0., 0., self.dimensionSizes, self.dimensionLabels, self.samplingFrequency)
@@ -62,7 +65,8 @@ class MyOVBox(OVBox):
 
    # fill buffer upon new epoch
    def resetSignalBuffer(self):
-      self.signalBuffer[0,:] = self.lastValue
+      self.signalBuffer[0,:] = self.lastOrigValue
+      self.signalBuffer[1,:] = self.lastBiaisedValue
 
    def sendSignalBufferToOpenvibe(self):
       start = self.timeBuffer[0]
@@ -75,10 +79,14 @@ class MyOVBox(OVBox):
      if self.debug:
        print "Got stim: ", stim.identifier, " date: ", stim.date, " duration: ", stim.duration
      self.newStimDate = stim.date
-   
+
+   def biasIt(self):
+     self.lastBiasValue = self.lastOrigValue + 1
+     
    # called by process each loop or by trigger when got new stimulation;  update IBI/BPM
    def updateValues(self):
-     self.signalBuffer[0,self.curEpoch:] = self.lastValue
+     self.signalBuffer[0,self.curEpoch:] = self.lastOrigValue
+     self.signalBuffer[1,self.curEpoch:] = self.lastBiasValue
 
    # the process is straightforward
    def process(self):
@@ -109,12 +117,14 @@ class MyOVBox(OVBox):
             #biasing the input signal to output it
             elif(type(self.input[1][chunk_index]) == OVStreamedMatrixBuffer):
                 inputChunk = self.input[1].pop()
+                # using last value of current input
                 # FIXME: nothing proof!
-                self.lastValue = inputChunk[-1]
+                self.lastOrigValue = inputChunk[-1]
                 if self.debug:
-                    print "chunk:", inputChunk 
-      
-      # in case we need to automatically change BPM 'cause of min/max
+                    print "input chunk:", inputChunk 
+
+      # compute bias, copy values to output
+      self.biasIt()
       self.updateValues()
       
       # update timestamps
