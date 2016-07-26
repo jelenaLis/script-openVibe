@@ -102,7 +102,7 @@ class MyOVBox(OVBox):
 
    def biasIt(self):
      if self.enableOutput:   
-       self.lastBiasValue = self.lastOrigValue + 1
+       self.lastBiasValue = self.lastOrigValue
      else:
        self.lastBiasValue = 0
      
