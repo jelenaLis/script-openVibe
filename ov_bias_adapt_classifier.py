@@ -1,8 +1,9 @@
 import numpy
-from Tkinter import *
+import xml.etree.ElementTree as ET
 
-# Bias (or not) input from classifier
-# FIXME: might not work if input actual frequency higher than box frequency
+
+# Bias (or not) input coming from the classifier
+# FIXME: might not work if input's actual frequency is higher than box's frequency
 # NB: based on IBI script from Tobe
 
 class MyOVBox(OVBox):
@@ -76,10 +77,12 @@ class MyOVBox(OVBox):
 
       # retrieve filename for performances
       self.perfFile = self.setting['Performance data']
-      self.loadPerf()
 
    def loadPerf(self):
-      print "Loading perfs from", self.perfFile
+      print "Loading perfs from:", self.perfFile
+
+   def savePerf(self):
+      print "Saving perfs to:", self.perfFile
       
    def updateStartTime(self):
       self.startTime += 1.*self.epochSampleCount/self.samplingFrequency
@@ -113,6 +116,10 @@ class MyOVBox(OVBox):
        self.enableOutput =  False
        if self.debug:
          print "output off"
+     elif stim.identifier == self.classRunStartStim:
+       self.loadPerf()
+     elif stim.identifier == self.classRunStopStim:
+       self.savePerf()
 
    def biasIt(self):
      if self.enableOutput:   
