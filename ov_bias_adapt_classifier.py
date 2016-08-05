@@ -1,6 +1,7 @@
 import numpy
 import xml.etree.ElementTree as ET
-
+import datetime
+import os.path
 
 # Bias (or not) input coming from the classifier
 # FIXME: might not work if input's actual frequency is higher than box's frequency
@@ -78,11 +79,53 @@ class MyOVBox(OVBox):
       # retrieve filename for performances
       self.perfFile = self.setting['Performance data']
 
+      self.savePerf()
+
    def loadPerf(self):
       print "Loading perfs from:", self.perfFile
+      try:
+          text_file = open(self.perfFile, "r")
+      except:
+          print "Error, opening file"
+          return
+      else:
+          text_file.close()
 
    def savePerf(self):
       print "Saving perfs to:", self.perfFile
+
+      scoreA = str(200)
+      scoreB = str(300)
+      classA_avg = str(0.3)
+      classB_avg = str(0.5)
+
+      # init xml, add timestamp
+      xml_top = ET.Element('subject')
+      xml_time = ET.SubElement(xml_top, 'timestamp')
+      i = datetime.datetime.now()
+      xml_time.text = i.isoformat()
+      # setup classA, score and classification
+      xml_classA = ET.SubElement(xml_top, 'classA')
+      xml_scoreA = ET.SubElement(xml_classA, 'score')
+      xml_scoreA.text = scoreA
+      xml_classA = ET.SubElement(xml_classA, 'classification')
+      xml_classA.text = classA_avg
+      # classB
+      xml_classB = ET.SubElement(xml_top, 'classB')
+      xml_scoreB = ET.SubElement(xml_classB, 'score')
+      xml_scoreB.text = scoreB
+      xml_classB = ET.SubElement(xml_classB, 'classification')
+      xml_classB.text = classB_avg
+      print ET.tostring(xml_top)
+      try:
+          text_file = open(self.perfFile, "w+")
+      except:
+          print "Error, writing file"
+          return
+      else:
+          text_file.write(ET.tostring(xml_top))
+          text_file.close()
+
       
    def updateStartTime(self):
       self.startTime += 1.*self.epochSampleCount/self.samplingFrequency
