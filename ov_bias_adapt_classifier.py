@@ -1,4 +1,4 @@
-import numpy
+import numpy as np
 import xml.etree.ElementTree as ET
 import datetime
 import os.path
@@ -37,8 +37,8 @@ class MyOVBox(OVBox):
       self.classRunStopStim = 0
       # where to read/save performance data
       self.perfFile = ""
-      # commandes only during trials
-      self.enableOutput = False
+      # commands only during trials -- code 1 for class A and 2 for class B; -1 if no current trial
+      self.currentClass = -1
       # will not try to bias of no file loaded
       self.gotPreviousRun = False
       # holders for previous data
@@ -46,6 +46,12 @@ class MyOVBox(OVBox):
       self.prevScoreB = 0
       self.prevClassA_avg = 0
       self.prevClassB_avg = 0
+      # holders for current data
+      self.classAValues = np.array([])
+      self.classBValues = np.array([])
+      self.scoreA = 0
+      self.scoreB = 0
+
 
    # this time we also re-define the initialize method to directly prepare the header and the first data chunk
    def initialize(self):
@@ -67,6 +73,8 @@ class MyOVBox(OVBox):
       self.classBStopStim = OpenViBE_stimulation[self.setting['Class B stop']]
       self.classRunStartStim = OpenViBE_stimulation[self.setting['Class Run start']]
       self.classRunStopStim = OpenViBE_stimulation[self.setting['Class Run stop']]
+      self.classACollect = OpenViBE_stimulation[self.setting['Class A collection']]
+      self.classBCollect = OpenViBE_stimulation[self.setting['Class B collection']]
 
       # settings are retrieved in the dictionary
       self.samplingFrequency = int(self.setting['Sampling frequency'])
@@ -88,10 +96,6 @@ class MyOVBox(OVBox):
 
       # retrieve filename for performances
       self.perfFile = self.setting['Performance data']
-
-
-      #self.savePerf()
-      self.loadPerf()
 
    def loadPerf(self):
       print "Loading perfs from:", self.perfFile
@@ -123,14 +127,12 @@ class MyOVBox(OVBox):
           return
 
       self.gotPreviousRun = True
-      print "Previous scores -- classA:", self.prevScoreA, " - classB:", self.prevScoreB
-      print "Previous classifier output -- classe A:", self.prevClassA_avg, " - classB:", self.prevClassB_avg
+      print "Previous scores -- class A:", self.prevScoreA, " - class B:", self.prevScoreB
+      print "Previous classifier output -- class A:", self.prevClassA_avg, " - class B:", self.prevClassB_avg
           
    def savePerf(self):
       print "Saving perfs to:", self.perfFile
 
-      scoreA = str(200)
-      scoreB = str(300)
       classA_avg = str(0.3)
       classB_avg = str(0.5)
 
@@ -142,13 +144,13 @@ class MyOVBox(OVBox):
       # setup classA, score and classification
       xml_classA = ET.SubElement(xml_root, 'classA')
       xml_scoreA = ET.SubElement(xml_classA, 'score')
-      xml_scoreA.text = scoreA
+      xml_scoreA.text = str(self.scoreA)
       xml_classA = ET.SubElement(xml_classA, 'classification')
       xml_classA.text = classA_avg
       # classB
       xml_classB = ET.SubElement(xml_root, 'classB')
       xml_scoreB = ET.SubElement(xml_classB, 'score')
-      xml_scoreB.text = scoreB
+      xml_scoreB.text = str(self.scoreB)
       xml_classB = ET.SubElement(xml_classB, 'classification')
       xml_classB.text = classB_avg
       try:
@@ -160,7 +162,6 @@ class MyOVBox(OVBox):
           text_file.write(ET.tostring(xml_root))
           text_file.close()
 
-      
    def updateStartTime(self):
       self.startTime += 1.*self.epochSampleCount/self.samplingFrequency
 
@@ -185,21 +186,33 @@ class MyOVBox(OVBox):
    def trigger(self, stim):
      if self.debug:
        print "Got stim: ", stim.identifier, " date: ", stim.date, " duration: ", stim.duration
-     if stim.identifier == self.classAStartStim or stim.identifier == self.classBStartStim:
-       self.enableOutput = True
+
+     if stim.identifier == self.classAStartStim:
+       self.currentClass = 1
        if self.debug:
-         print "output on"
+         print "output class A on"
+     elif stim.identifier == self.classBStartStim:   
+       self.currentClass = 2
+       if self.debug:
+         print "output class B on"
      elif stim.identifier == self.classAStopStim or stim.identifier == self.classBStopStim:
-       self.enableOutput =  False
+       self.currentClass = -1
        if self.debug:
          print "output off"
+
      elif stim.identifier == self.classRunStartStim:
        self.loadPerf()
      elif stim.identifier == self.classRunStopStim:
        self.savePerf()
 
+
+     elif stim.identifier == self.classACollect:
+       self.scoreA += 1
+     elif stim.identifier == self.classBCollect:
+       self.scoreB += 1
+       
    def biasIt(self):
-     if self.enableOutput:   
+     if self.currentClass > 0:   
        self.lastBiasValue = self.lastOrigValue
      else:
        self.lastBiasValue = 0
