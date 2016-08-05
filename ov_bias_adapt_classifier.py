@@ -133,9 +133,6 @@ class MyOVBox(OVBox):
    def savePerf(self):
       print "Saving perfs to:", self.perfFile
 
-      classA_avg = str(0.3)
-      classB_avg = str(0.5)
-
       # init xml, add timestamp
       xml_root = ET.Element('subject')
       xml_time = ET.SubElement(xml_root, 'timestamp')
@@ -146,13 +143,13 @@ class MyOVBox(OVBox):
       xml_scoreA = ET.SubElement(xml_classA, 'score')
       xml_scoreA.text = str(self.scoreA)
       xml_classA = ET.SubElement(xml_classA, 'classification')
-      xml_classA.text = classA_avg
+      xml_classA.text = str(np.average(self.classAValues))
       # classB
       xml_classB = ET.SubElement(xml_root, 'classB')
       xml_scoreB = ET.SubElement(xml_classB, 'score')
       xml_scoreB.text = str(self.scoreB)
       xml_classB = ET.SubElement(xml_classB, 'classification')
-      xml_classB.text = classB_avg
+      xml_classB.text = str(np.average(self.classBValues))
       try:
           text_file = open(self.perfFile, "w+")
       except:
@@ -243,7 +240,7 @@ class MyOVBox(OVBox):
          elif(type(self.input[0][chunkIndex]) == OVStimulationEnd):
            self.input[0].pop()
 
-      ## deal with classifier input
+      ## deal with classifier input -- copying and saving value
       for chunk_index in range(len(self.input[1])):
             #passing on the header to the output
             if(type(self.input[1][chunk_index]) == OVStreamedMatrixHeader):
@@ -254,6 +251,11 @@ class MyOVBox(OVBox):
                 # using last value of current input
                 # FIXME: nothing proof!
                 self.lastOrigValue = inputChunk[-1]
+                # add to past values to the list if a trial is currently on
+                if self.currentClass == 1:
+                    self.classAValues = np.append(self.classAValues, self.lastOrigValue)
+                elif self.currentClass == 2:
+                    self.classBValues = np.append(self.classBValues, self.lastOrigValue)
 
       # compute bias, copy values to output
       self.biasIt()
