@@ -7,6 +7,9 @@ import os.path
 # FIXME: might not work if input's actual frequency is higher than box's frequency
 # NB: based on IBI script from Tobe
 
+# load/write perf between runs, XML format
+# E.g. <subject><timestamp>2016-08-05T11:37:36.105328</timestamp><classA><score>200</score><classification>0.3</classification></classA><classB><score>300</score><classification>0.5</classification></classB></subject>
+
 class MyOVBox(OVBox):
    def __init__(self):
       OVBox.__init__(self)
@@ -27,7 +30,7 @@ class MyOVBox(OVBox):
       self.debug = False
       # stims for the studied class and start / stop of run
       self.classAStartStim = 0
-      self.classAStopStim = 0
+      self.classASopStim = 0
       self.classBStartStim = 0
       self.classBStopStim = 0
       self.classRunStartStim = 0
@@ -36,6 +39,13 @@ class MyOVBox(OVBox):
       self.perfFile = ""
       # commandes only during trials
       self.enableOutput = False
+      # will not try to bias of no file loaded
+      self.gotPreviousRun = False
+      # holders for previous data
+      self.prevScoreA = 0
+      self.prevScoreB = 0
+      self.prevClassA_avg = 0
+      self.prevClassB_avg = 0
 
    # this time we also re-define the initialize method to directly prepare the header and the first data chunk
    def initialize(self):
@@ -79,18 +89,43 @@ class MyOVBox(OVBox):
       # retrieve filename for performances
       self.perfFile = self.setting['Performance data']
 
-      self.savePerf()
+
+      #self.savePerf()
+      self.loadPerf()
 
    def loadPerf(self):
       print "Loading perfs from:", self.perfFile
+      # try to read file
       try:
           text_file = open(self.perfFile, "r")
       except:
-          print "Error, opening file"
+          print "!! Error, opening file !!"
           return
       else:
+          self.gotPreviousRun = True
+          raw_xml = text_file.read()
           text_file.close()
+      # try to convert to XML
+      try:
+          xml_root = ET.fromstring(raw_xml)
+      except:
+          print "!! Error, converting to XML !!"
+          return
 
+      # fetching data
+      try:
+          self.prevScoreA = float(xml_root.find('classA').find('score').text)
+          self.prevScoreB = float(xml_root.find('classB').find('score').text)
+          self.prevClassA_avg = float(xml_root.find('classA').find('classification').text)
+          self.prevClassB_avg = float(xml_root.find('classB').find('classification').text)
+      except:
+          print "!! Error, parsing XML !!"
+          return
+
+      self.gotPreviousRun = True
+      print "Previous scores -- classA:", self.prevScoreA, " - classB:", self.prevScoreB
+      print "Previous classifier output -- classe A:", self.prevClassA_avg, " - classB:", self.prevClassB_avg
+          
    def savePerf(self):
       print "Saving perfs to:", self.perfFile
 
@@ -100,30 +135,29 @@ class MyOVBox(OVBox):
       classB_avg = str(0.5)
 
       # init xml, add timestamp
-      xml_top = ET.Element('subject')
-      xml_time = ET.SubElement(xml_top, 'timestamp')
+      xml_root = ET.Element('subject')
+      xml_time = ET.SubElement(xml_root, 'timestamp')
       i = datetime.datetime.now()
       xml_time.text = i.isoformat()
       # setup classA, score and classification
-      xml_classA = ET.SubElement(xml_top, 'classA')
+      xml_classA = ET.SubElement(xml_root, 'classA')
       xml_scoreA = ET.SubElement(xml_classA, 'score')
       xml_scoreA.text = scoreA
       xml_classA = ET.SubElement(xml_classA, 'classification')
       xml_classA.text = classA_avg
       # classB
-      xml_classB = ET.SubElement(xml_top, 'classB')
+      xml_classB = ET.SubElement(xml_root, 'classB')
       xml_scoreB = ET.SubElement(xml_classB, 'score')
       xml_scoreB.text = scoreB
       xml_classB = ET.SubElement(xml_classB, 'classification')
       xml_classB.text = classB_avg
-      print ET.tostring(xml_top)
       try:
           text_file = open(self.perfFile, "w+")
       except:
-          print "Error, writing file"
+          print "!! Error, writing file !!"
           return
       else:
-          text_file.write(ET.tostring(xml_top))
+          text_file.write(ET.tostring(xml_root))
           text_file.close()
 
       
