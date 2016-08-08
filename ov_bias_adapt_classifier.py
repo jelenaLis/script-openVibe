@@ -159,7 +159,7 @@ class MyOVBox(OVBox):
           text_file.write(ET.tostring(xml_root))
           text_file.close()
 
-          print "New scores -- class A:", xml_scoreA.text, " - class B:", self.prevScoreB
+          print "New scores -- class A:", xml_scoreA.text, " - class B:", xml_scoreB.text
           print "New classifier output -- class A:", xml_classA.text, " - class B:", xml_classB.text
           
 
