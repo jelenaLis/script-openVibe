@@ -90,7 +90,7 @@ class MyOVBox(OVBox):
 
       #creation of the first signal chunk
       self.endTime = 1.*self.epochSampleCount/self.samplingFrequency
-      self.signalBuffer = numpy.zeros((self.channelCount, self.epochSampleCount))
+      self.signalBuffer = np.zeros((self.channelCount, self.epochSampleCount))
       self.updateTimeBuffer()
       self.resetSignalBuffer()
 
@@ -159,6 +159,10 @@ class MyOVBox(OVBox):
           text_file.write(ET.tostring(xml_root))
           text_file.close()
 
+          print "New scores -- class A:", xml_scoreA.text, " - class B:", self.prevScoreB
+          print "New classifier output -- class A:", xml_classA.text, " - class B:", xml_classB.text
+          
+
    def updateStartTime(self):
       self.startTime += 1.*self.epochSampleCount/self.samplingFrequency
 
@@ -166,7 +170,7 @@ class MyOVBox(OVBox):
       self.endTime = float(self.startTime + 1.*self.epochSampleCount/self.samplingFrequency)
 
    def updateTimeBuffer(self):
-      self.timeBuffer = numpy.arange(self.startTime, self.endTime, 1./self.samplingFrequency)
+      self.timeBuffer = np.arange(self.startTime, self.endTime, 1./self.samplingFrequency)
 
    # fill buffer upon new epoch
    def resetSignalBuffer(self):
