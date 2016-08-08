@@ -25,4 +25,4 @@ for f in npzfile.files:
     meta.append(npzfile[f])
 
 #print meta
-np.savetxt(output_file, np.array(meta).transpose(), delimiter=CSV_DELIMITER, header=headers, fmt="%s")
+np.savetxt(output_file, np.array(meta).transpose(), delimiter=CSV_DELIMITER, header=headers, fmt="%s", comments='')
