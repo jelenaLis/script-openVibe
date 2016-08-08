@@ -3,6 +3,7 @@
 import os, glob
 import subprocess
 import xml.etree.ElementTree as ET
+import numpy as np
 
 # where signals are recorded, should be one folder per ID, subfolders "mus" and "nomus"
 signals_path="../signals"
@@ -15,6 +16,9 @@ ov_scenario="../replayer_adapt.xml"
 ov_script_config="../replayer_adapt_gdf.cfg"
 # and write there
 ov_script_res="../run_perfs_replay.cfg"
+
+# will add "npz" suffix, saving data as numpy arrays
+output_file="data"
 
 # data frame of the poor
 list_id = []
@@ -124,4 +128,7 @@ print "Conditions:", list_cond
 print "Directions:", list_direction
 print "Scores:", list_score
 print "Classes", list_class
+
+print "Saving to:", output_file + ".npz"
+np.savez(output_file, list_id=list_id, list_cond=list_cond, list_direction=list_direction, list_score=list_score, list_class=list_class)
 
