@@ -18,10 +18,10 @@ ov_script_res="../run_perfs_replay.cfg"
 
 # data frame of the poor
 list_id = []
-list_mus_score_L = []
-list_nomus_score_R = []
-list_mus_class_L = []
-list_mus_class_R = []
+list_cond = [] # 0 for nomus, 1 for mus conditions
+list_direction = [] # 0 for left, 1 for right
+list_score = []
+list_class = []
 
 
 def run_ov():
@@ -30,7 +30,7 @@ def run_ov():
     output, err = p.communicate()
     return output, err
 
-
+# taken from adapt script, maybe simpler to use all of ET power (see config_ov)
 def loadPerf(res_file):
       print "Loading perfs from:", res_file
       # try to read file
@@ -64,30 +64,64 @@ def loadPerf(res_file):
 
       return prevScoreA, prevScoreB, prevClassA_avg, prevClassB_avg
 
+# id_path: location of signals for this subject
+# condition_tag: "mus" or "nomus", subfolders
+def process(id_path, condition_tag):
+    global list_id, list_cond, list_direction, list_score, list_class
+    
+    mus_path = os.path.join(id_path, condition_tag)
+    class_files = glob.glob(mus_path + '/*class.gdf')
+    for gdf in class_files:
+        abs_gdf = os.path.abspath(gdf)
+        print "Processing", abs_gdf
 
+        config_ov(ov_script_config, abs_gdf)
+
+        print "Running OpenViBE"
+        output, err = run_ov()
+        print "%%% ouput %%%"
+        print output
+        print "%%% error %%%"
+        print err
+
+        print "Getting parameters"
+        prevScoreA, prevScoreB, prevClassA_avg, prevClassB_avg  = loadPerf(ov_script_res)
+
+        list_id.append(d)
+        list_cond.append(condition_tag)
+        # left then right
+        list_direction.append(0)
+        list_score.append(prevScoreA)
+        list_class.append(prevClassA_avg)
+        list_direction.append(1)
+        list_score.append(prevScoreB)
+        list_class.append(prevClassB_avg)
+    
+# point OV conf_file to gdf_file
+def config_ov(conf_file, gdf_file):
+    tree = ET.parse(conf_file)
+    root = tree.getroot()
+    # here gdf file is the first parameter
+    root[0].text =  gdf_file
+    # save back
+    tree.write(conf_file)
+    
 for d in os.listdir(signals_path):
     id_path = os.path.join(signals_path, d)
     # only want folders
     if os.path.isfile(id_path):
         continue
     print "studying ID:",  d
+
     # deal with music
-    mus_path = os.path.join(id_path, "mus")
-    class_files = glob.glob(mus_path + '/*class.gdf')
-    for gdf in class_files:
-        abs_gdf = os.path.abspath(gdf)
-        print "Processing", abs_gdf
-    #"for m in os.listdir(signals_path):
-
-    nomus_path = os.path.join(id_path, "nomus")
+    process(id_path, "mus")    
+    # deal with nomusic
+    process(id_path, "nomus")    
 
 
-#output, err = run_ov()
-
-#print "%%% ouput %%%"
-#print output
-#print "%%% error %%%"
-#print err
-
-print loadPerf(ov_script_res)
+print "ID:", list_id
+print "Conditions:", list_cond
+print "Directions:", list_direction
+print "Scores:", list_score
+print "Classes", list_class
 
