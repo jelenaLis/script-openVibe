@@ -1,3 +1,5 @@
 *.pyc
 signals/
 *.cfg
+*.csv
+*.npz

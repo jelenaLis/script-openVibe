@@ -91,12 +91,15 @@ def process(id_path, condition_tag):
         print "Getting parameters"
         prevScoreA, prevScoreB, prevClassA_avg, prevClassB_avg  = loadPerf(ov_script_res)
 
+        # left then right, duplicate everything so we have same number of elements
         list_id.append(d)
         list_cond.append(condition_tag)
-        # left then right
         list_direction.append(0)
         list_score.append(prevScoreA)
         list_class.append(prevClassA_avg)
+
+        list_id.append(d)
+        list_cond.append(condition_tag)
         list_direction.append(1)
         list_score.append(prevScoreB)
         list_class.append(prevClassB_avg)
