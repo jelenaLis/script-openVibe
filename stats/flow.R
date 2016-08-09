@@ -1,4 +1,6 @@
 
+swedish_data = read.csv("swedish_stats.csv")  # read csv file 
+swedish_data$score = as.numeric(sub(",", ".", swedish_data$score, fixed = TRUE))
 
 eduflow_data = read.csv("Eduflow2_stats.csv")  # read csv file 
 
@@ -21,6 +23,7 @@ wilcox.test(music$score, nomusic$score)
 perf_data = read.csv("data.csv")
 perf_data$eduflow = -1
 perf_data$eduflow3D = -1
+perf_data$swedish = -1
 
 # for overall score
 perf_data$total = -1
@@ -46,10 +49,17 @@ for (id in ids) {
   nomus_edu_score3D = eduflow_data[eduflow_data$ID == id & eduflow_data$musique == 0,]$score3D
   cat("nomusic score3D", nomus_edu_score3D, "\n")
   perf_data[perf_data$list_id == id & perf_data$list_cond == "nomus",]$eduflow3D = nomus_edu_score3D
+  
+  # swedish_data
+  swedish_score = swedish_data[swedish_data$ID == id,]$score
+  cat("swedish score", swedish_score, "\n")
+  perf_data[perf_data$list_id == id,]$swedish = swedish_score
+  
+  
 }
 
 
-data_mean = aggregate( cbind(list_class, list_score, eduflow, eduflow3D) ~ list_id + list_cond + list_direction, data = perf_data, FUN = mean)
+data_mean = aggregate( cbind(list_class, list_score, eduflow, eduflow3D, swedish) ~ list_id + list_cond + list_direction, data = perf_data, FUN = mean)
  
 # how score and classifier output relate
 plot(data_mean$list_class, data_mean$list_score)
@@ -62,7 +72,7 @@ data_mean_bis[data_mean_bis$list_direction == 0,]$list_class = data_mean_bis[dat
 plot(data_mean_bis$list_class, data_mean_bis$list_score)
 
 # average across left/right
-data_across = aggregate( cbind(list_class, list_score, eduflow, eduflow3D) ~ list_id + list_cond, data = data_mean_bis, FUN = mean)
+data_across = aggregate( cbind(list_class, list_score, eduflow, eduflow3D, swedish) ~ list_id + list_cond, data = data_mean_bis, FUN = mean)
 
 # try to sense some sense
 plot(data_across$list_class, data_across$list_score)
@@ -126,20 +136,48 @@ abline(3.271, 1.211)
 x = (7 - 3.271) / 1.211
 
 #3D version
+plot(data_split$dist, data_split$eduflow3D)
 
-##
+rcorr(data_split$eduflow3D,data_split$dist, type="pearson")
+lm(data_split$eduflow3D ~ data_split$dist )
+abline(3.318, 1.265)
+x = (7 - 3.318) / 1.265
+
+## trying to account for flow
+
+data_split$swedish7 = ((data_split$swedish - 1) / 5 * 7 )+ 1
+data_split$dist_flow = data_split$eduflow3D - data_split$swedish7
+
+plot(data_split$dist, data_split$dist_flow)
+rcorr(data_split$dist_flow,data_split$dist, type="pearson")
+model = lm( data_split$dist ~ data_split$eduflow3D + data_split$swedish7)
+
+summary(model)
+abline(model)
 
 
-data_left = data_mean_bis[data_mean_bis$list_direction == 0,]
-plot(data_left$list_score, data_left$eduflow)
-plot(data_left$list_class, data_left$eduflow)
-lm(data_left$eduflow ~ data_left$list_class)
+# test with average
 
-data_right = data_mean_bis[data_mean_bis$list_direction == 1,]
-plot(data_right$list_score, data_right$eduflow)
-plot(data_right$list_class, data_right$eduflow)
-lm(data_right$eduflow ~ data_right$list_class)
+data_split$dist_flow2 = data_split$eduflow3D - (data_split$swedish7 - mean(data_split$swedish7 ))
 
+plot(data_split$dist, data_split$dist_flow2)
+rcorr(data_split$dist_flow2,data_split$dist, type="pearson")
+model = lm(data_split$dist_flow2 ~ data_split$dist)
+summary(model)
+x = (7 - 3.083) / 1.422
+# target
+sqrt((x*x)/2) - 1
 
-plot(data_across$list_score, data_across$eduflow)
+# test with (pseudo?) z-score
+
+data_split$dist_flow2 = data_split$eduflow3D -  scale(data_split$swedish7 )
+
+plot(data_split$dist, data_split$dist_flow2)
+rcorr(data_split$dist_flow2,data_split$dist, type="pearson")
+model = lm(data_split$dist_flow2 ~ data_split$dist)
+summary(model)
+
+x = (7 - 2.618) / 1.731
+# target
+sqrt((x*x)/2) - 1
 
