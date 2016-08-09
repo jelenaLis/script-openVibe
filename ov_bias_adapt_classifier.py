@@ -101,6 +101,10 @@ class MyOVBox(OVBox):
       # retrieve filename for performances
       self.perfFile = self.setting['Performance data']
 
+   # dirty fix for real time bias
+   def online_magic(self, class_output):
+      return class_output + ( 0.79 - class_output)/2.
+
    # the magical formula, taking a classifier output and giving the bias to apply
    def magic(self, class_avg):
       x = class_avg
@@ -240,10 +244,10 @@ class MyOVBox(OVBox):
        
    def biasIt(self):
      if self.currentClass > 0:   
-       if self.currentClass == 1:
-           self.lastBiasValue = self.lastOrigValue + self.biasA
+       if self.currentClass == 1: #1st class is -1
+           self.lastBiasValue = -1*self.online_magic(-1*self.lastOrigValue)
        else:
-           self.lastBiasValue = self.lastOrigValue + self.biasB
+           self.lastBiasValue = self.online_magic(self.lastOrigValue)
      else:
        self.lastBiasValue = 0
      
