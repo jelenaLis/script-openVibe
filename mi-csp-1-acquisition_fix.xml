@@ -527,10 +527,6 @@
 					<Value>(0x00000000, 0x0029067d)</Value>
 				</Attribute>
 				<Attribute>
-					<Identifier>(0xc67a01dc, 0x28ce06c1)</Identifier>
-					<Value></Value>
-				</Attribute>
-				<Attribute>
 					<Identifier>(0xc73e83ec, 0xf855c5bc)</Identifier>
 					<Value>false</Value>
 				</Attribute>
@@ -706,10 +702,10 @@
 			</Attributes>
 		</Link>
 		<Link>
-			<Identifier>(0x2571720b, 0x066dcc01)</Identifier>
+			<Identifier>(0x2b37aa13, 0x020ff3d6)</Identifier>
 			<Source>
-				<BoxIdentifier>(0x41f31939, 0x7ff00bfa)</BoxIdentifier>
-				<BoxOutputIndex>0</BoxOutputIndex>
+				<BoxIdentifier>(0x00002117, 0x000005ce)</BoxIdentifier>
+				<BoxOutputIndex>1</BoxOutputIndex>
 			</Source>
 			<Target>
 				<BoxIdentifier>(0x6cc61d1a, 0x425b0a22)</BoxIdentifier>
@@ -718,11 +714,11 @@
 			<Attributes>
 				<Attribute>
 					<Identifier>(0x1b32c44c, 0x1905e0e9)</Identifier>
-					<Value>35</Value>
+					<Value>-60</Value>
 				</Attribute>
 				<Attribute>
 					<Identifier>(0x358ae8b5, 0x0f8bacd1)</Identifier>
-					<Value>288</Value>
+					<Value>641</Value>
 				</Attribute>
 				<Attribute>
 					<Identifier>(0x3f0a3b27, 0x570913d2)</Identifier>
