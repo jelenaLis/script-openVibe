@@ -2,8 +2,9 @@ import numpy as np
 import xml.etree.ElementTree as ET
 import datetime
 import os.path
+from math import exp
 
-# Bias (or not) input coming from the classifier
+# Bias (or not) input coming from the classifier. class A should be -1 and class B 1
 # FIXME: might not work if input's actual frequency is higher than box's frequency
 # NB: based on IBI script from Tobe
 
@@ -52,6 +53,9 @@ class MyOVBox(OVBox):
       self.scoreA = 0
       self.scoreB = 0
 
+      # value to add to current run
+      self.biasA = 0
+      self.biasB = 0
 
    # this time we also re-define the initialize method to directly prepare the header and the first data chunk
    def initialize(self):
@@ -97,6 +101,28 @@ class MyOVBox(OVBox):
       # retrieve filename for performances
       self.perfFile = self.setting['Performance data']
 
+   # the magical formula, taking a classifier output and giving the bias to apply
+   def magic(self, class_avg):
+      x = class_avg
+      # expected output
+      y = x + ( 0.79 - x) * 1/(1+exp(-2*x))
+      return y - class_avg
+
+   # the bias that should be applied
+   # apply formula to bias current run from previous classifier output
+   def setupBias(self):
+      if self.gotPreviousRun:
+          # 1st class is -1
+          self.biasA = -1 * self.magic(self.prevClassA_avg * -1)
+          # 2nd class more readable
+          self.biasB =  self.magic(self.prevClassB_avg)
+      else:
+          print "No data for previous run"
+
+      print "Bias for class A:", self.biasA
+      print "Bias for class B:", self.biasB
+       
+   # read data from last run
    def loadPerf(self):
       print "Loading perfs from:", self.perfFile
       # try to read file
@@ -106,7 +132,6 @@ class MyOVBox(OVBox):
           print "!! Error, opening file !!"
           return
       else:
-          self.gotPreviousRun = True
           raw_xml = text_file.read()
           text_file.close()
       # try to convert to XML
@@ -203,6 +228,7 @@ class MyOVBox(OVBox):
 
      elif stim.identifier == self.classRunStartStim:
        self.loadPerf()
+       self.setupBias()
      elif stim.identifier == self.classRunStopStim:
        self.savePerf()
 
@@ -214,7 +240,10 @@ class MyOVBox(OVBox):
        
    def biasIt(self):
      if self.currentClass > 0:   
-       self.lastBiasValue = self.lastOrigValue
+       if self.currentClass == 1:
+           self.lastBiasValue = self.lastOrigValue + self.biasA
+       else:
+           self.lastBiasValue = self.lastOrigValue + self.biasB
      else:
        self.lastBiasValue = 0
      
