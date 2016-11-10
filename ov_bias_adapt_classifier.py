@@ -11,6 +11,8 @@ from math import exp
 # load/write perf between runs, XML format
 # E.g. <subject><timestamp>2016-08-05T11:37:36.105328</timestamp><classA><score>200</score><classification>0.3</classification></classA><classB><score>300</score><classification>0.5</classification></classB></subject>
 
+# FIXME: in the end this version does not used previous data, switch from online_magic() to magic() in biasIt() to do so.
+
 class MyOVBox(OVBox):
    def __init__(self):
       OVBox.__init__(self)
