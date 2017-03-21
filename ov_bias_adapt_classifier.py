@@ -105,7 +105,7 @@ class MyOVBox(OVBox):
 
    # dirty fix for real time bias
    def online_magic(self, class_output):
-      return class_output + ( 0.79 - class_output)/2.
+      return class_output + ( 1.5 - class_output)/2.
 
    # the magical formula, taking a classifier output and giving the bias to apply
    def magic(self, class_avg):
