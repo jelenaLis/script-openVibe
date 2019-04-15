@@ -109,6 +109,11 @@ class MyOVBox(OVBox):
           else:
               # 1st class should be -1, second 1, center ideally is 0
               self.biasCenter = (self.prevClassA_avg + self.prevClassB_avg) / 2.0
+              # check against odd values
+              if self.biasCenter < -1:
+                  self.biasCenter = -1
+              elif self.biasCenter > 1:
+                  self.biasCenter = 1
       else:
           print "No data for previous run"
 
@@ -238,11 +243,29 @@ class MyOVBox(OVBox):
    # apply bias, center based on last run
    def biasIt(self):
      if self.currentClass > 0:
-       # TODO: bias with specific target for class A or B
-       if self.currentClass == 1: #1st class is -1
-           self.lastBiasValue = self.lastOrigValue - self.biasCenter
+       # use biasCenter to split input in half, map each half to eihter -1...0 or 0..1
+       # first, clean the input value
+       if self.lastOrigValue < -1:
+           self.lastOrigValue = -1
+       elif self.lastOrigValue > 1:
+           self.lastOrigValue = 1
+       # take care of left side
+       if self.lastOrigValue < self.biasCenter:
+           inputRange = self.biasCenter + 1
+           self.lastBiasValue = (self.lastOrigValue + 1) / inputRange - 1
+       # now right side
+       elif self.lastOrigValue > self.biasCenter:
+           inputRange = 1 - self.biasCenter
+           self.lastBiasValue = (self.lastOrigValue - 1) /inputRange + 1      
+       # will be centered exactly
        else:
-           self.lastBiasValue = self.lastOrigValue - self.biasCenter
+           self.lastBiasValue = 0
+         
+       # for the future, if there is a bias depending on class
+       if self.currentClass == 1: #1st class is -1
+           return
+       else:
+           return
      else:
        self.lastBiasValue = 0
      
