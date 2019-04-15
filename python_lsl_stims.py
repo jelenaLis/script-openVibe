@@ -5,7 +5,9 @@ from math import ceil
 #ov_lib_path = os.getcwd() + "./lib_ov/"
 #sys.path.append(ov_lib_path)
 # FIXME absolute path to point to pylsl.py & liblsl.so -- added before any other LSL path
-sys.path = ["/home/flow/flow/script-openVibe/libs"] + sys.path
+#sys.path = ["/home/flow/flow/script-openVibe/libs"] + sys.path
+#sys.path = ["/home/jfrey/flow/script-openVibe/libs2"] + sys.path
+sys.path = ["/home/jfrey/flow/script-openVibe/libs3"] + sys.path
 
 from pylsl import StreamInlet, resolve_stream
 
