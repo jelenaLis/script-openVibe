@@ -11,8 +11,6 @@ import math
 # load/write perf between runs, XML format
 # E.g. <subject><timestamp>2016-08-05T11:37:36.105328</timestamp><classA><score>200</score><classification>0.3</classification></classA><classB><score>300</score><classification>0.5</classification></classB></subject>
 
-# FIXME: in the end this version does not used previous data, switch from online_magic() to magic() in biasIt() to do so.
-
 class MyOVBox(OVBox):
    def __init__(self):
       OVBox.__init__(self)
@@ -101,10 +99,6 @@ class MyOVBox(OVBox):
 
       # retrieve filename for performances
       self.perfFile = self.setting['Performance data']
-
-   # real time bias, towad a fixed target
-   def online_magic(self, class_output):
-      return class_output + self.biasCenter # ( 0.79 - class_output)/2.
 
    # the bias that should be applied
    # apply formula to bias current run from previous classifier output
@@ -241,12 +235,14 @@ class MyOVBox(OVBox):
      elif stim.identifier == self.classBCollect:
        self.scoreB += 1
        
+   # apply bias, center based on last run
    def biasIt(self):
-     if self.currentClass > 0:   
+     if self.currentClass > 0:
+       # TODO: bias with specific target for class A or B
        if self.currentClass == 1: #1st class is -1
-           self.lastBiasValue = -1*self.online_magic(-1*self.lastOrigValue)
+           self.lastBiasValue = self.lastOrigValue - self.biasCenter
        else:
-           self.lastBiasValue = self.online_magic(self.lastOrigValue)
+           self.lastBiasValue = self.lastOrigValue - self.biasCenter
      else:
        self.lastBiasValue = 0
      
