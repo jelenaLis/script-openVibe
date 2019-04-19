@@ -1,2 +1,6 @@
 *.csv
 *.RData
+models/*
+dataset-converted/*
+dataset-orig/*
+

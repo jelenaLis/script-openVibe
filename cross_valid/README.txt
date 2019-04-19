@@ -1,4 +1,16 @@
 
+
+Scripts adapted from Jussi's examples.
+
+Bump to OpenViBE 2.2.
+
+NB: CSV Writer/Reader still use deprecated box because the new one at the moment necessitate a (useless here) signal stream, and do not let customize separators.
+
+Beware: change epoch offset and duration in mi scripts (stimulation based epoching + lua script switch director) in order to match length on the trials with tux.
+
+===
+
+
 Trial-based cross-validation in OpenViBE, scripts ver v0.4c (scenarios updated for OpenViBE 1.3.0 at 14mar2017)
 
 The most recent document version should be at
