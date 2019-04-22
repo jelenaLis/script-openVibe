@@ -8,6 +8,8 @@ import math
 # FIXME: might not work if input's actual frequency is higher than box's frequency
 # NB: based on ov_bias_adapt_classifier.py, based on IBI script from Tobe
 
+# Will take input ("orig"), center it if option set, bias it if option set, and enable/disable
+
 # load/write perf between runs, XML format
 # E.g. <subject><timestamp>2016-08-05T11:37:36.105328</timestamp><classA><score>200</score><classification>0.3</classification></classA><classB><score>300</score><classification>0.5</classification></classB></subject>
 
@@ -25,9 +27,11 @@ class MyOVBox(OVBox):
       self.timeBuffer = list()
       self.signalBuffer = None
       self.signalHeader = None
-      # two variables for two channels...
+      # four variables for four channels...
       self.lastOrigValue = -1
-      self.lastBiaisedValue = -1
+      self.lastCenterValue = -1
+      self.lastBiasValue = -1
+      self.lastOutputValue = -1
       self.debug = False
       # stims for the studied class and start / stop of run
       self.classAStartStim = 0
@@ -61,8 +65,8 @@ class MyOVBox(OVBox):
 
    # this time we also re-define the initialize method to directly prepare the header and the first data chunk
    def initialize(self):
-      # two channels, original classifier output  and biaised output
-      self.channelCount = 2
+      # four channels, original classifier output, possibly recentered with vidaurre, possibly adapted, enabled or not between flag
+      self.channelCount = 4
       
       # try get debug flag from GUI
       try:
@@ -95,7 +99,9 @@ class MyOVBox(OVBox):
       
       #creation of the signal header
       self.dimensionLabels.append('orig_classifier') 
-      self.dimensionLabels.append('biaised_classifier') 
+      self.dimensionLabels.append('centered_classifier') 
+      self.dimensionLabels.append('biaised_classifier')
+      self.dimensionLabels.append('enabled_classifier') 
       self.dimensionLabels += self.epochSampleCount*['']
       self.dimensionSizes = [self.channelCount, self.epochSampleCount]
       self.signalHeader = OVSignalHeader(0., 0., self.dimensionSizes, self.dimensionLabels, self.samplingFrequency)
@@ -110,7 +116,7 @@ class MyOVBox(OVBox):
       # retrieve filename for performances
       self.perfFile = self.setting['Performance data']
 
-   # the bias that should be applied
+   # the center bias that should be applied
    # apply formula to bias current run from previous classifier output
    def setupBias(self):
       if self.gotPreviousRun:
@@ -212,7 +218,10 @@ class MyOVBox(OVBox):
    # fill buffer upon new epoch
    def resetSignalBuffer(self):
       self.signalBuffer[0,:] = self.lastOrigValue
-      self.signalBuffer[1,:] = self.lastBiaisedValue
+      self.signalBuffer[1,:] = self.lastCenterValue
+      self.signalBuffer[2,:] = self.lastBiasValue
+      self.signalBuffer[3,:] = self.lastOutputValue
+
 
    def sendSignalBufferToOpenvibe(self):
       start = self.timeBuffer[0]
@@ -253,41 +262,72 @@ class MyOVBox(OVBox):
        self.scoreA += 5
      elif stim.identifier == self.classBCollectStar:
        self.scoreB += 5
-       
-   # apply bias, center based on last run
-   def biasIt(self):
-     if self.currentClass > 0:
-       # use biasCenter to split input in half, map each half to eihter -1...0 or 0..1
-       # first, clean the input value
+     
+   # clean input values
+   def cleanIt(self):
        if self.lastOrigValue < -1:
            self.lastOrigValue = -1
        elif self.lastOrigValue > 1:
            self.lastOrigValue = 1
+           
+   # apply bias, center based on last run
+   # use biasCenter to split input in half, map each half to eihter -1...0 or 0..1
+   def centerIt(self):
+       # check if option set
+       if not self.enableCenter:
+           self.lastCenterValue = self.lastOrigValue
+           return
+           
+       # check against odd values
+       if self.biasCenter == 1 or self.biasCenter == -1:
+           self.lastCenterValue = self.lastOrigValue
+           return
+
        # take care of left side
        if self.lastOrigValue < self.biasCenter:
            inputRange = self.biasCenter + 1
-           self.lastBiasValue = (self.lastOrigValue + 1) / inputRange - 1
+           self.lastCenterValue = (self.lastOrigValue + 1) / inputRange - 1
        # now right side
        elif self.lastOrigValue > self.biasCenter:
            inputRange = 1 - self.biasCenter
-           self.lastBiasValue = (self.lastOrigValue - 1) /inputRange + 1      
+           self.lastCenterValue = (self.lastOrigValue - 1) /inputRange + 1      
        # will be centered exactly
        else:
-           self.lastBiasValue = 0
+           self.lastCenterValue = 0
+             
+   # TODO: apply bias toward a target with new formula
+   def biasIt(self):
+       if not self.enableAdapt:
+           self.lastBiasValue = self.lastCenterValue
+           return
          
-       # for the future, if there is a bias depending on class
+       # bias depending on current class
        if self.currentClass == 1: #1st class is -1
-           return
+           self.lastBiasValue = self.lastCenterValue - 0.5
+       elif self.currentClass == 2:
+           self.lastBiasValue = self.lastCenterValue + 0.5
+       else: # no active class, no bias
+           self.lastBiasValue = self.lastCenterValue
+
+       if self.lastBiasValue  < -1:
+           self.lastBiasValue = -1
+       elif self.lastBiasValue  > 1:
+           self.lastBiasValue = 1
+           
+   # Will enable / disable last channel depending on trial status
+   def enableIt(self):
+       if self.currentClass > 0:
+           self.lastOutputValue = self.lastBiasValue
        else:
-           return
-     else:
-       self.lastBiasValue = 0
-     
+           self.lastOutputValue = 0
+
    # called by process each loop or by trigger when got new stimulation;  update output
    def updateValues(self):
      self.signalBuffer[0,self.curEpoch:] = self.lastOrigValue
-     self.signalBuffer[1,self.curEpoch:] = self.lastBiasValue
-
+     self.signalBuffer[1,self.curEpoch:] = self.lastCenterValue
+     self.signalBuffer[2,self.curEpoch:] = self.lastBiasValue
+     self.signalBuffer[3,self.curEpoch:] = self.lastOutputValue
+          
    # the process is straightforward
    def process(self):
       ## Deal with received stimulations
@@ -301,7 +341,6 @@ class MyOVBox(OVBox):
            # create a list for corresponding chunck
            stimSetIn = self.input[0].pop()
            # even without any signals we receive sets, have to check what they hold
-           nb_stim =  str(len(stimSetIn))
            for stim in stimSetIn:
              # check which 
              self.trigger(stim)
@@ -326,12 +365,16 @@ class MyOVBox(OVBox):
                 elif self.currentClass == 2:
                     self.classBValues = np.append(self.classBValues, self.lastOrigValue)
 
+
       # compute bias, copy values to output
+      self.cleanIt()
+      self.centerIt()
       self.biasIt()
+      self.enableIt()
       self.updateValues()
       
       # update timestamps
-      start = self.timeBuffer[0]
+      #start = self.timeBuffer[0]
       end = self.timeBuffer[-1]
       while self.curEpoch < self.epochSampleCount and self.getCurrentTime() >= self.timeBuffer[self.curEpoch]:
          self.curEpoch+=1
