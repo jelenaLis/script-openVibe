@@ -8,13 +8,13 @@ datasetFolder<-"../signals/";
 # file format recorded during calibration
 datasetPattern<-"motor-imagery-csp-1-acquisition-.*\\.gdf";
 
-# the label and signal CSV files are written here.
+# the label and signal CSV files are written here, will be created if does not exist
 outputFolder<-"dataset-orig";
 
 
 g_NoGui<- "--no-gui"; # set to empty "" to see the GUI, good for debugging
 g_Designer<-"ov-designer-2.2";
-g_Scenario<-"concatenate.xml" # will be created if does not exist
+g_Scenario<-"concatenate.xml" 
 
 #### should be nothing to modify below this
 

@@ -10,6 +10,8 @@ Beware: change epoch offset and duration in MI scripts (stimulation based epochi
 
 Added concatenation.
 
+Here is former version, which loop over various participants.
+
 ===
 
 
