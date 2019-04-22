@@ -6,7 +6,9 @@ Bump to OpenViBE 2.2.
 
 NB: CSV Writer/Reader still use deprecated box because the new one at the moment necessitate a (useless here) signal stream, and do not let customize separators.
 
-Beware: change epoch offset and duration in mi scripts (stimulation based epoching + lua script switch director) in order to match length on the trials with tux.
+Beware: change epoch offset and duration in MI scripts (stimulation based epoching + lua script switch director) in order to match length on the trials with tux.
+
+Added concatenation.
 
 ===
 
