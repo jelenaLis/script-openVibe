@@ -52,6 +52,9 @@ class MyOVBox(OVBox):
       self.classBValues = np.array([])
       self.scoreA = 0
       self.scoreB = 0
+      # enable / disable functionalities
+      self.enableCenter = False
+      self.enableAdapt = False
 
       # value to add to current run to center output
       self.biasCenter = 0
@@ -68,6 +71,10 @@ class MyOVBox(OVBox):
         print "Couldn't find debug flag"
       else:
         self.debug=debug
+        
+      # flags for enabling / disabling center and adapt biases
+      self.enableCenter = (self.setting['Center']=="true")
+      self.enableAdapt = (self.setting['Adapt']=="true")
 
       # we want our stims
       self.classAStartStim = OpenViBE_stimulation[self.setting['Class A start']]
@@ -78,7 +85,10 @@ class MyOVBox(OVBox):
       self.classRunStopStim = OpenViBE_stimulation[self.setting['Class Run stop']]
       self.classACollect = OpenViBE_stimulation[self.setting['Class A collection']]
       self.classBCollect = OpenViBE_stimulation[self.setting['Class B collection']]
-
+      # for 5 points
+      self.classACollectStar = OpenViBE_stimulation[self.setting['Class A collection star']]
+      self.classBCollectStar = OpenViBE_stimulation[self.setting['Class B collection star']]
+      
       # settings are retrieved in the dictionary
       self.samplingFrequency = int(self.setting['Sampling frequency'])
       self.epochSampleCount = int(self.setting['Generated epoch sample count'])
@@ -239,6 +249,10 @@ class MyOVBox(OVBox):
        self.scoreA += 1
      elif stim.identifier == self.classBCollect:
        self.scoreB += 1
+     elif stim.identifier == self.classACollectStar:
+       self.scoreA += 5
+     elif stim.identifier == self.classBCollectStar:
+       self.scoreB += 5
        
    # apply bias, center based on last run
    def biasIt(self):
