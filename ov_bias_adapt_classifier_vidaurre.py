@@ -13,6 +13,10 @@ import math
 # load/write perf between runs, XML format
 # E.g. <subject><timestamp>2016-08-05T11:37:36.105328</timestamp><classA><score>200</score><classification>0.3</classification></classA><classB><score>300</score><classification>0.5</classification></classB></subject>
 
+# at the moment constants, min and max bias to correct center
+MIN_CENTER_BIAS = -0.5
+MAX_CENTER_BIAS = 0.5
+
 class MyOVBox(OVBox):
    def __init__(self):
       OVBox.__init__(self)
@@ -117,7 +121,7 @@ class MyOVBox(OVBox):
       self.perfFile = self.setting['Performance data']
 
    # the center bias that should be applied
-   # apply formula to bias current run from previous classifier output
+   # apply formula to bias current run from previous classifier output (median of each class)
    def setupBias(self):
       if self.gotPreviousRun:
           if math.isnan(self.prevClassA_avg) or  math.isnan(self.prevClassB_avg):
@@ -125,11 +129,11 @@ class MyOVBox(OVBox):
           else:
               # 1st class should be -1, second 1, center ideally is 0
               self.biasCenter = (self.prevClassA_avg + self.prevClassB_avg) / 2.0
-              # check against odd values
-              if self.biasCenter < -1:
-                  self.biasCenter = -1
-              elif self.biasCenter > 1:
-                  self.biasCenter = 1
+              # check against min/max
+              if self.biasCenter < MIN_CENTER_BIAS:
+                  self.biasCenter = MIN_CENTER_BIAS
+              elif self.biasCenter > MAX_CENTER_BIAS:
+                  self.biasCenter = MAX_CENTER_BIAS
       else:
           print "No data for previous run"
 
@@ -186,13 +190,13 @@ class MyOVBox(OVBox):
       xml_scoreA = ET.SubElement(xml_classA, 'score')
       xml_scoreA.text = str(self.scoreA)
       xml_classA = ET.SubElement(xml_classA, 'classification')
-      xml_classA.text = str(np.average(self.classAValues))
+      xml_classA.text = str(np.median(self.classAValues))
       # classB
       xml_classB = ET.SubElement(xml_root, 'classB')
       xml_scoreB = ET.SubElement(xml_classB, 'score')
       xml_scoreB.text = str(self.scoreB)
       xml_classB = ET.SubElement(xml_classB, 'classification')
-      xml_classB.text = str(np.average(self.classBValues))
+      xml_classB.text = str(np.median(self.classBValues))
       try:
           text_file = open(self.perfFile, "w+")
       except:
