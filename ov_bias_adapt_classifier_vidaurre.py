@@ -12,6 +12,7 @@ import math
 
 # load/write perf between runs, XML format
 # E.g. <subject><timestamp>2016-08-05T11:37:36.105328</timestamp><classA><score>200</score><classification>0.3</classification></classA><classB><score>300</score><classification>0.5</classification></classB></subject>
+# Use stim configured as "Run start" to reset class output and load values, stim "Run stop" to save data.
 
 # at the moment constants, min and max bias to correct center
 MIN_CENTER_BIAS = -0.5
@@ -55,7 +56,7 @@ class MyOVBox(OVBox):
       self.prevScoreB = 0
       self.prevClassA_avg = 0
       self.prevClassB_avg = 0
-      # holders for current data
+      # holders for current data -- will be reset upon new race (recieving "Run start" stim)
       self.classAValues = np.array([])
       self.classBValues = np.array([])
       self.scoreA = 0
@@ -251,9 +252,13 @@ class MyOVBox(OVBox):
        if self.debug:
          print "output off"
 
+     # new race, reset class values, load previous data
      elif stim.identifier == self.classRunStartStim:
+       self.classAValues = np.array([])
+       self.classBValues = np.array([])
        self.loadPerf()
        self.setupBias()
+     # race completed, save values
      elif stim.identifier == self.classRunStopStim:
        self.savePerf()
 

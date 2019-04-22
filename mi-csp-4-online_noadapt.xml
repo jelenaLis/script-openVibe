@@ -1772,7 +1772,7 @@
 					<TypeIdentifier>(0x2c132d6e, 0x44ab0d97)</TypeIdentifier>
 					<Name>Class Run stop</Name>
 					<DefaultValue>OVTK_StimulationId_SegmentStop</DefaultValue>
-					<Value>OVTK_StimulationId_SegmentStop</Value>
+					<Value>OVTK_StimulationId_Train</Value>
 					<Modifiability>false</Modifiability>
 				</Setting>
 				<Setting>
