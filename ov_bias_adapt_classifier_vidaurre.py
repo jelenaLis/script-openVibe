@@ -27,7 +27,7 @@ FAKE_BASE_VALUE = 0.7
 # adding gaussian noise at each step
 FAKE_NOISE_STD = 0.1
 # how often the direction might change depending on accuracy (in seconds)
-FAKE_DIRECTION_CHANGE = 0.25
+FAKE_DIRECTION_CHANGE = 0.5
 
 #FIXME: faking depends on sampling rate and chunk size (how often noise is computed)
 
