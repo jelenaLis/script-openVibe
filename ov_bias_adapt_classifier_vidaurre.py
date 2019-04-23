@@ -2,13 +2,15 @@ import numpy as np
 import xml.etree.ElementTree as ET
 import datetime
 import os.path
-import math
+import math, random
 
 # Bias (or not) input coming from the classifier. class A should be -1 and class B 1, implementing (roughly) Vidaurre et al. "Toward Unsupervised Adaptation of LDA for Brain-Computer Interfaces"
 # FIXME: might not work if input's actual frequency is higher than box's frequency
 # NB: based on ov_bias_adapt_classifier.py, based on IBI script from Tobe
 
 # Will take input ("orig"), center it if option set, bias it if option set, and enable/disable
+
+# "Fake output" mode: at each trial will automatically go to a direction or another
 
 # load/write perf between runs, XML format
 # E.g. <subject><timestamp>2016-08-05T11:37:36.105328</timestamp><classA><score>200</score><classification>0.3</classification></classA><classB><score>300</score><classification>0.5</classification></classB></subject>
@@ -17,6 +19,13 @@ import math
 # at the moment constants, min and max bias to correct center
 MIN_CENTER_BIAS = -0.5
 MAX_CENTER_BIAS = 0.5
+
+# 0 (always wrong direction) to 1 (always good direction)
+FAKE_ACCURACY = 0.75
+# 0 (base is middle) to 1 (base is max value, either -1 or 1)
+FAKE_BASE_VALUE = 0.7
+# adding gaussian noise at each step
+FAKE_NOISE_STD = 0.1
 
 class MyOVBox(OVBox):
    def __init__(self):
@@ -87,6 +96,7 @@ class MyOVBox(OVBox):
       self.enableCenter = (self.setting['Center']=="true")
       self.enableAdapt = (self.setting['Adapt']=="true")
       self.enablePerf = (self.setting['Performance computations']=="true")
+      self.enableFake = (self.setting['Fake output']=="true")
 
       # we want our stims
       self.classAStartStim = OpenViBE_stimulation[self.setting['Class A start']]
@@ -326,10 +336,33 @@ class MyOVBox(OVBox):
        elif self.lastBiasValue  > 1:
            self.lastBiasValue = 1
            
-   # Will enable / disable last channel depending on trial status
-   def enableIt(self):
+   # Will enable / disable last channel depending on trial status -- or just fake the output is option set
+   def enableOrFakeIt(self):
        if self.currentClass > 0:
-           self.lastOutputValue = self.lastBiasValue
+           # fake mode, create value
+           if self.enableFake:
+               # will it go toward the right target?
+               if (random.random() <  FAKE_ACCURACY):
+                   fakeGood = True
+               else:
+                   fakeGood = False
+               # choose direction, first class is -1
+               if self.currentClass == 1 or (self.currentClass == 2 and not fakeGood):
+                   fakeVal = -1
+               else:
+                   fakeVal = 1
+               # modulate with mean
+               fakeVal *= FAKE_BASE_VALUE
+               # add gaussian noise
+               fakeVal += random.gauss(0, FAKE_NOISE_STD)
+               if (fakeVal < -1):
+                   fakeVal = -1
+               elif (fakeVal > 1):
+                   fakeVal = 1
+               self.lastOutputValue = fakeVal
+           # no fake, just validate bias
+           else:
+               self.lastOutputValue = self.lastBiasValue
        else:
            self.lastOutputValue = 0
 
@@ -381,7 +414,7 @@ class MyOVBox(OVBox):
       # compute bias, copy values to output
       self.centerIt()
       self.biasIt()
-      self.enableIt()
+      self.enableOrFakeIt()
       self.updateValues()
       
       # update timestamps
