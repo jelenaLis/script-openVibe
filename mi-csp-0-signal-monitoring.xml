@@ -202,7 +202,7 @@
 					<TypeIdentifier>(0x512a166f, 0x5c3ef83f)</TypeIdentifier>
 					<Name>Vertical Scale</Name>
 					<DefaultValue>100</DefaultValue>
-					<Value>200</Value>
+					<Value>500</Value>
 					<Modifiability>false</Modifiability>
 				</Setting>
 				<Setting>
@@ -320,7 +320,7 @@
 					<TypeIdentifier>(0x512a166f, 0x5c3ef83f)</TypeIdentifier>
 					<Name>Vertical Scale</Name>
 					<DefaultValue>100</DefaultValue>
-					<Value>200</Value>
+					<Value>500</Value>
 					<Modifiability>false</Modifiability>
 				</Setting>
 				<Setting>
