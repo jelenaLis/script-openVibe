@@ -116,7 +116,7 @@
 					<TypeIdentifier>(0x79a9edeb, 0x245d83fc)</TypeIdentifier>
 					<Name>Acquisition server hostname</Name>
 					<DefaultValue>${AcquisitionServer_HostName}</DefaultValue>
-					<Value>193.50.110.71</Value>
+					<Value>localhost</Value>
 					<Modifiability>false</Modifiability>
 				</Setting>
 				<Setting>
@@ -625,6 +625,17 @@
 	</Boxes>
 	<Links>
 		<Link>
+			<Identifier>(0x00002938, 0x00007ac5)</Identifier>
+			<Source>
+				<BoxIdentifier>(0x37bdf0bb, 0x7f7ee85d)</BoxIdentifier>
+				<BoxOutputIndex>0</BoxOutputIndex>
+			</Source>
+			<Target>
+				<BoxIdentifier>(0x0000105e, 0x00007603)</BoxIdentifier>
+				<BoxInputIndex>0</BoxInputIndex>
+			</Target>
+		</Link>
+		<Link>
 			<Identifier>(0x20f6db57, 0x64b79bfd)</Identifier>
 			<Source>
 				<BoxIdentifier>(0x27591186, 0x7d6fc4a4)</BoxIdentifier>
@@ -643,17 +654,6 @@
 			</Source>
 			<Target>
 				<BoxIdentifier>(0x27591186, 0x7d6fc4a4)</BoxIdentifier>
-				<BoxInputIndex>0</BoxInputIndex>
-			</Target>
-		</Link>
-		<Link>
-			<Identifier>(0x37d50143, 0x0c4ad469)</Identifier>
-			<Source>
-				<BoxIdentifier>(0x00005792, 0x00005c0c)</BoxIdentifier>
-				<BoxOutputIndex>1</BoxOutputIndex>
-			</Source>
-			<Target>
-				<BoxIdentifier>(0x0000105e, 0x00007603)</BoxIdentifier>
 				<BoxInputIndex>0</BoxInputIndex>
 			</Target>
 		</Link>

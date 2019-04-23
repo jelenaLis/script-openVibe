@@ -7,6 +7,85 @@
 	<Outputs></Outputs>
 	<Boxes>
 		<Box>
+			<Identifier>(0x0000105e, 0x00007603)</Identifier>
+			<Name>Temporal filter</Name>
+			<AlgorithmClassIdentifier>(0xb4f9d042, 0x9d79f2e5)</AlgorithmClassIdentifier>
+			<Inputs>
+				<Input>
+					<TypeIdentifier>(0x5ba36127, 0x195feae1)</TypeIdentifier>
+					<Name>Input signal</Name>
+				</Input>
+			</Inputs>
+			<Outputs>
+				<Output>
+					<TypeIdentifier>(0x5ba36127, 0x195feae1)</TypeIdentifier>
+					<Name>Filtered signal</Name>
+				</Output>
+			</Outputs>
+			<Settings>
+				<Setting>
+					<TypeIdentifier>(0x2f2c606c, 0x8512ed68)</TypeIdentifier>
+					<Name>Filter method</Name>
+					<DefaultValue>Butterworth</DefaultValue>
+					<Value>Butterworth</Value>
+					<Modifiability>false</Modifiability>
+				</Setting>
+				<Setting>
+					<TypeIdentifier>(0xfa20178e, 0x4cba62e9)</TypeIdentifier>
+					<Name>Filter type</Name>
+					<DefaultValue>Low pass</DefaultValue>
+					<Value>Band pass</Value>
+					<Modifiability>false</Modifiability>
+				</Setting>
+				<Setting>
+					<TypeIdentifier>(0x007deef9, 0x2f3e95c6)</TypeIdentifier>
+					<Name>Filter order</Name>
+					<DefaultValue>4</DefaultValue>
+					<Value>4</Value>
+					<Modifiability>false</Modifiability>
+				</Setting>
+				<Setting>
+					<TypeIdentifier>(0x512a166f, 0x5c3ef83f)</TypeIdentifier>
+					<Name>Low cut frequency (Hz)</Name>
+					<DefaultValue>29</DefaultValue>
+					<Value>1.000000</Value>
+					<Modifiability>false</Modifiability>
+				</Setting>
+				<Setting>
+					<TypeIdentifier>(0x512a166f, 0x5c3ef83f)</TypeIdentifier>
+					<Name>High cut frequency (Hz)</Name>
+					<DefaultValue>40</DefaultValue>
+					<Value>40.000000</Value>
+					<Modifiability>false</Modifiability>
+				</Setting>
+				<Setting>
+					<TypeIdentifier>(0x512a166f, 0x5c3ef83f)</TypeIdentifier>
+					<Name>Pass band ripple (dB)</Name>
+					<DefaultValue>0.5</DefaultValue>
+					<Value>0.500000</Value>
+					<Modifiability>false</Modifiability>
+				</Setting>
+			</Settings>
+			<Attributes>
+				<Attribute>
+					<Identifier>(0x1fa7a38f, 0x54edbe0b)</Identifier>
+					<Value>832</Value>
+				</Attribute>
+				<Attribute>
+					<Identifier>(0x207c9054, 0x3c841b63)</Identifier>
+					<Value>256</Value>
+				</Attribute>
+				<Attribute>
+					<Identifier>(0x4e7b798a, 0x183beafb)</Identifier>
+					<Value>(0x27a4ceec, 0x876d6384)</Value>
+				</Attribute>
+				<Attribute>
+					<Identifier>(0xc46b3d00, 0x3e0454e1)</Identifier>
+					<Value>(0x00000000, 0x0074a76f)</Value>
+				</Attribute>
+			</Attributes>
+		</Box>
+		<Box>
 			<Identifier>(0x0000565b, 0x00006695)</Identifier>
 			<Name>Time based epoching</Name>
 			<AlgorithmClassIdentifier>(0x00777fa0, 0x5dc3f560)</AlgorithmClassIdentifier>
@@ -360,7 +439,7 @@
 				</Attribute>
 				<Attribute>
 					<Identifier>(0x1fa7a38f, 0x54edbe0b)</Identifier>
-					<Value>880</Value>
+					<Value>832</Value>
 				</Attribute>
 				<Attribute>
 					<Identifier>(0x207c9054, 0x3c841b63)</Identifier>
@@ -551,7 +630,7 @@
 					<TypeIdentifier>(0x512a166f, 0x5c3ef83f)</TypeIdentifier>
 					<Name>Vertical Scale</Name>
 					<DefaultValue>100</DefaultValue>
-					<Value>200</Value>
+					<Value>500</Value>
 					<Modifiability>false</Modifiability>
 				</Setting>
 				<Setting>
@@ -669,7 +748,7 @@
 					<TypeIdentifier>(0x512a166f, 0x5c3ef83f)</TypeIdentifier>
 					<Name>Vertical Scale</Name>
 					<DefaultValue>100</DefaultValue>
-					<Value>200</Value>
+					<Value>500</Value>
 					<Modifiability>false</Modifiability>
 				</Setting>
 				<Setting>
@@ -2179,6 +2258,28 @@
 	</Boxes>
 	<Links>
 		<Link>
+			<Identifier>(0x0000008f, 0x00000493)</Identifier>
+			<Source>
+				<BoxIdentifier>(0x0000105e, 0x00007603)</BoxIdentifier>
+				<BoxOutputIndex>0</BoxOutputIndex>
+			</Source>
+			<Target>
+				<BoxIdentifier>(0x27591186, 0x7d6fc4a5)</BoxIdentifier>
+				<BoxInputIndex>0</BoxInputIndex>
+			</Target>
+		</Link>
+		<Link>
+			<Identifier>(0x00001757, 0x00002d38)</Identifier>
+			<Source>
+				<BoxIdentifier>(0x135f228f, 0x69341ba3)</BoxIdentifier>
+				<BoxOutputIndex>0</BoxOutputIndex>
+			</Source>
+			<Target>
+				<BoxIdentifier>(0x0000105e, 0x00007603)</BoxIdentifier>
+				<BoxInputIndex>0</BoxInputIndex>
+			</Target>
+		</Link>
+		<Link>
 			<Identifier>(0x00001c15, 0x000060eb)</Identifier>
 			<Source>
 				<BoxIdentifier>(0x135f228f, 0x69341ba3)</BoxIdentifier>
@@ -2187,17 +2288,6 @@
 			<Target>
 				<BoxIdentifier>(0x25455019, 0x2df2dedb)</BoxIdentifier>
 				<BoxInputIndex>1</BoxInputIndex>
-			</Target>
-		</Link>
-		<Link>
-			<Identifier>(0x000031ac, 0x00006383)</Identifier>
-			<Source>
-				<BoxIdentifier>(0x135f228f, 0x69341ba3)</BoxIdentifier>
-				<BoxOutputIndex>0</BoxOutputIndex>
-			</Source>
-			<Target>
-				<BoxIdentifier>(0x27591186, 0x7d6fc4a5)</BoxIdentifier>
-				<BoxInputIndex>0</BoxInputIndex>
 			</Target>
 		</Link>
 		<Link>
@@ -2212,9 +2302,9 @@
 			</Target>
 		</Link>
 		<Link>
-			<Identifier>(0x00007fd4, 0x000022f3)</Identifier>
+			<Identifier>(0x0000750c, 0x00001cf4)</Identifier>
 			<Source>
-				<BoxIdentifier>(0x135f228f, 0x69341ba3)</BoxIdentifier>
+				<BoxIdentifier>(0x0000105e, 0x00007603)</BoxIdentifier>
 				<BoxOutputIndex>0</BoxOutputIndex>
 			</Source>
 			<Target>
