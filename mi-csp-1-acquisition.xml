@@ -261,7 +261,7 @@
 					<TypeIdentifier>(0x330306dd, 0x74a95f98)</TypeIdentifier>
 					<Name>Filename</Name>
 					<DefaultValue>record-[$core{date}-$core{time}].gdf</DefaultValue>
-					<Value>${Player_ScenarioDirectory}/signals/signals/motor-imagery-csp-1-acquisition-[$core{date}-$core{time}]_fake.gdf</Value>
+					<Value>${Player_ScenarioDirectory}/signals/motor-imagery-csp-1-acquisition-[$core{date}-$core{time}]_fake.gdf</Value>
 					<Modifiability>false</Modifiability>
 				</Setting>
 			</Settings>
@@ -777,7 +777,7 @@
 					<TypeIdentifier>(0x330306dd, 0x74a95f98)</TypeIdentifier>
 					<Name>Filename</Name>
 					<DefaultValue>record-[$core{date}-$core{time}].gdf</DefaultValue>
-					<Value>${Player_ScenarioDirectory}/signals/signals/motor-imagery-csp-1-acquisition-[$core{date}-$core{time}]_EEG.gdf</Value>
+					<Value>${Player_ScenarioDirectory}/signals/motor-imagery-csp-1-acquisition-[$core{date}-$core{time}]_EEG.gdf</Value>
 					<Modifiability>false</Modifiability>
 				</Setting>
 			</Settings>
