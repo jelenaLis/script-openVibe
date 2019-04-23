@@ -366,8 +366,8 @@ class MyOVBox(OVBox):
             elif(type(self.input[1][chunk_index]) == OVStreamedMatrixBuffer):
                 inputChunk = self.input[1].pop()
                 # using last value of current input
-                # FIXME: nothing proof!
                 self.lastOrigValue = inputChunk[-1]
+                cleanIt()
                 # add to past values to the list if a trial is currently on
                 if self.currentClass == 1:
                     self.classAValues = np.append(self.classAValues, self.lastOrigValue)
@@ -376,7 +376,6 @@ class MyOVBox(OVBox):
 
 
       # compute bias, copy values to output
-      self.cleanIt()
       self.centerIt()
       self.biasIt()
       self.enableIt()
