@@ -54,8 +54,8 @@ class MyOVBox(OVBox):
       # holders for previous data
       self.prevScoreA = 0
       self.prevScoreB = 0
-      self.prevClassA_avg = 0
-      self.prevClassB_avg = 0
+      self.prevClassA_avg = -1
+      self.prevClassB_avg = 1
       # holders for current data -- will be reset upon new race (recieving "Run start" stim)
       self.classAValues = np.array([])
       self.classBValues = np.array([])
@@ -64,6 +64,8 @@ class MyOVBox(OVBox):
       # enable / disable functionalities
       self.enableCenter = False
       self.enableAdapt = False
+      # save/load perf (if disabled will not even gather data about class output)
+      self.enablePerf = True
 
       # value to add to current run to center output
       self.biasCenter = 0
@@ -84,6 +86,7 @@ class MyOVBox(OVBox):
       # flags for enabling / disabling center and adapt biases
       self.enableCenter = (self.setting['Center']=="true")
       self.enableAdapt = (self.setting['Adapt']=="true")
+      self.enablePerf = (self.setting['Performance computations']=="true")
 
       # we want our stims
       self.classAStartStim = OpenViBE_stimulation[self.setting['Class A start']]
@@ -256,12 +259,12 @@ class MyOVBox(OVBox):
      elif stim.identifier == self.classRunStartStim:
        self.classAValues = np.array([])
        self.classBValues = np.array([])
-       self.loadPerf()
+       if self.enablePerf:
+           self.loadPerf()
        self.setupBias()
      # race completed, save values
-     elif stim.identifier == self.classRunStopStim:
+     elif stim.identifier == self.classRunStopStim and self.enablePerf:
        self.savePerf()
-
 
      elif stim.identifier == self.classACollect:
        self.scoreA += 1
@@ -367,11 +370,11 @@ class MyOVBox(OVBox):
                 inputChunk = self.input[1].pop()
                 # using last value of current input
                 self.lastOrigValue = inputChunk[-1]
-                cleanIt()
+                self.cleanIt()
                 # add to past values to the list if a trial is currently on
-                if self.currentClass == 1:
+                if self.currentClass == 1 and self.enablePerf:
                     self.classAValues = np.append(self.classAValues, self.lastOrigValue)
-                elif self.currentClass == 2:
+                elif self.currentClass == 2 and self.enablePerf:
                     self.classBValues = np.append(self.classBValues, self.lastOrigValue)
 
 
