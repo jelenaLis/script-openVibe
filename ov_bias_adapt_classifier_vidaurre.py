@@ -26,6 +26,10 @@ FAKE_ACCURACY = 0.75
 FAKE_BASE_VALUE = 0.7
 # adding gaussian noise at each step
 FAKE_NOISE_STD = 0.1
+# how often the direction might change depending on accuracy (in seconds)
+FAKE_DIRECTION_CHANGE = 0.25
+
+#FIXME: faking depends on sampling rate and chunk size (how often noise is computed)
 
 class MyOVBox(OVBox):
    def __init__(self):
@@ -130,6 +134,10 @@ class MyOVBox(OVBox):
       self.signalBuffer = np.zeros((self.channelCount, self.epochSampleCount))
       self.updateTimeBuffer()
       self.resetSignalBuffer()
+      #will be used for fake
+      self.fakeTick = 0
+      self.fakeGood = True
+
 
       # retrieve filename for performances
       self.perfFile = self.setting['Performance data']
@@ -335,19 +343,31 @@ class MyOVBox(OVBox):
            self.lastBiasValue = -1
        elif self.lastBiasValue  > 1:
            self.lastBiasValue = 1
-           
+   
+   # starting a trial, for fake
+   def fakeStart(self):
+       self.fakeDirection()
+       
+   # choose one direction or the other when fake is on
+   def fakeDirection(self): 
+       self.fakeTick = self.getCurrentTime()
+       # will it go towardthe right target?
+       if (random.random() <  FAKE_ACCURACY):
+           self.fakeGood = True
+       else:
+           self.fakeGood = False
+       
    # Will enable / disable last channel depending on trial status -- or just fake the output is option set
    def enableOrFakeIt(self):
        if self.currentClass > 0:
            # fake mode, create value
            if self.enableFake:
-               # will it go toward the right target?
-               if (random.random() <  FAKE_ACCURACY):
-                   fakeGood = True
-               else:
-                   fakeGood = False
+               # check if we should change direction
+               if self.getCurrentTime() - self.fakeTick > FAKE_DIRECTION_CHANGE:
+                   self.fakeDirection()
+
                # choose direction, first class is -1
-               if self.currentClass == 1 or (self.currentClass == 2 and not fakeGood):
+               if (self.currentClass == 1 and self.fakeGood) or (self.currentClass == 2 and not self.fakeGood):
                    fakeVal = -1
                else:
                    fakeVal = 1
