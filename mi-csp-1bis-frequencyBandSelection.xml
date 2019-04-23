@@ -308,7 +308,7 @@
 		</Box>
 		<Box>
 			<Identifier>(0x0000527a, 0x00003bbf)</Identifier>
-			<Name>Cue + 0.5s</Name>
+			<Name>epoch trial</Name>
 			<AlgorithmClassIdentifier>(0x426163d1, 0x324237b0)</AlgorithmClassIdentifier>
 			<Inputs>
 				<Input>
@@ -331,21 +331,21 @@
 					<TypeIdentifier>(0x512a166f, 0x5c3ef83f)</TypeIdentifier>
 					<Name>Epoch duration (in sec)</Name>
 					<DefaultValue>1</DefaultValue>
-					<Value>2</Value>
+					<Value>3.5</Value>
 					<Modifiability>false</Modifiability>
 				</Setting>
 				<Setting>
 					<TypeIdentifier>(0x512a166f, 0x5c3ef83f)</TypeIdentifier>
 					<Name>Epoch offset (in sec)</Name>
 					<DefaultValue>0.5</DefaultValue>
-					<Value>-0.75</Value>
+					<Value>-0.5</Value>
 					<Modifiability>false</Modifiability>
 				</Setting>
 				<Setting>
 					<TypeIdentifier>(0x2c132d6e, 0x44ab0d97)</TypeIdentifier>
 					<Name>Stimulation to epoch from</Name>
 					<DefaultValue>OVTK_StimulationId_Label_00</DefaultValue>
-					<Value>OVTK_GDF_Feedback_Continuous</Value>
+					<Value>OVTK_GDF_Start_Of_Trial</Value>
 					<Modifiability>false</Modifiability>
 				</Setting>
 			</Settings>
