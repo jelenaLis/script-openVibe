@@ -927,6 +927,13 @@
 					<Modifiability>false</Modifiability>
 				</Setting>
 				<Setting>
+					<TypeIdentifier>(0x330306dd, 0x74a95f98)</TypeIdentifier>
+					<Name>Performance backup</Name>
+					<DefaultValue>${Player_ScenarioDirectory}/run_perfs_[$core{date}-$core{time}].cfg</DefaultValue>
+					<Value>${Player_ScenarioDirectory}/run_perfs_[$core{date}-$core{time}].cfg</Value>
+					<Modifiability>false</Modifiability>
+				</Setting>
+				<Setting>
 					<TypeIdentifier>(0x2c132d6e, 0x44ab0d97)</TypeIdentifier>
 					<Name>Class A collection</Name>
 					<DefaultValue>OVTK_StimulationId_Label_03</DefaultValue>

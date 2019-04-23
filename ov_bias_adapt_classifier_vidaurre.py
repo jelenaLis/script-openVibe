@@ -60,6 +60,8 @@ class MyOVBox(OVBox):
       self.classRunStopStim = 0
       # where to read/save performance data
       self.perfFile = ""
+      self.perfFileBackup = ""
+
       # commands only during trials -- code 1 for class A and 2 for class B; -1 if no current trial
       self.currentClass = -1
       # will not try to bias of no file loaded
@@ -141,6 +143,9 @@ class MyOVBox(OVBox):
 
       # retrieve filename for performances
       self.perfFile = self.setting['Performance data']
+      # this one should possess timestamps in order to create new file each time upon save
+      self.perfFileBackup = self.setting['Performance backup']
+
 
    # the center bias that should be applied
    # apply formula to bias current run from previous classifier output (median of each class)
@@ -193,7 +198,8 @@ class MyOVBox(OVBox):
       self.gotPreviousRun = True
       print "Previous scores -- class A:", self.prevScoreA, " - class B:", self.prevScoreB
       print "Previous classifier output -- class A:", self.prevClassA_avg, " - class B:", self.prevClassB_avg
-          
+        
+   # FIXME: dirty hack, saving as well a backup file
    def savePerf(self):
       print "Saving perfs to:", self.perfFile
 
@@ -230,7 +236,16 @@ class MyOVBox(OVBox):
 
           print "New scores -- class A:", xml_scoreA.text, " - class B:", xml_scoreB.text
           print "New classifier output -- class A:", xml_classA.text, " - class B:", xml_classB.text
-          
+
+      print "Saving backup to:", self.perfFileBackup
+      try:
+          text_file_backup = open(self.perfFileBackup, "w+")
+      except:
+          print "!! Error, writing backup file !!"
+          return
+      else:
+          text_file_backup.write(ET.tostring(xml_root))
+          text_file_backup.close()
 
    def updateStartTime(self):
       self.startTime += 1.*self.epochSampleCount/self.samplingFrequency
