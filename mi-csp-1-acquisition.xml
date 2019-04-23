@@ -866,7 +866,7 @@
 			</Attributes>
 		</Box>
 		<Box>
-			<Identifier>(0x7336bd23, 0x72e0178a)</Identifier>
+			<Identifier>(0x7336bd23, 0x72e0178b)</Identifier>
 			<Name>bias classifier adapt</Name>
 			<AlgorithmClassIdentifier>(0x5dc4f669, 0xd3fd4d64)</AlgorithmClassIdentifier>
 			<Inputs>
@@ -978,6 +978,13 @@
 					<Modifiability>false</Modifiability>
 				</Setting>
 				<Setting>
+					<TypeIdentifier>(0x330306dd, 0x74a95f98)</TypeIdentifier>
+					<Name>Performance backup</Name>
+					<DefaultValue>${Player_ScenarioDirectory}/run_perfs_[$core{date}-$core{time}].cfg</DefaultValue>
+					<Value>${Player_ScenarioDirectory}/signals/run_perfs_[$core{date}-$core{time}].cfg</Value>
+					<Modifiability>false</Modifiability>
+				</Setting>
+				<Setting>
 					<TypeIdentifier>(0x2c132d6e, 0x44ab0d97)</TypeIdentifier>
 					<Name>Class A collection</Name>
 					<DefaultValue>OVTK_StimulationId_Label_03</DefaultValue>
@@ -1038,7 +1045,7 @@
 				</Attribute>
 				<Attribute>
 					<Identifier>(0x207c9054, 0x3c841b63)</Identifier>
-					<Value>272</Value>
+					<Value>208</Value>
 				</Attribute>
 				<Attribute>
 					<Identifier>(0x30a4e5c9, 0x83502953)</Identifier>
@@ -1103,24 +1110,13 @@
 			</Target>
 		</Link>
 		<Link>
-			<Identifier>(0x05d73c6a, 0x6c2e4812)</Identifier>
-			<Source>
-				<BoxIdentifier>(0x7336bd23, 0x72e0178a)</BoxIdentifier>
-				<BoxOutputIndex>0</BoxOutputIndex>
-			</Source>
-			<Target>
-				<BoxIdentifier>(0x0000565b, 0x00006696)</BoxIdentifier>
-				<BoxInputIndex>0</BoxInputIndex>
-			</Target>
-		</Link>
-		<Link>
-			<Identifier>(0x067d7bc7, 0x728e07ea)</Identifier>
+			<Identifier>(0x0abf85f8, 0x34e9639b)</Identifier>
 			<Source>
 				<BoxIdentifier>(0x2e5b9edd, 0x3e65b440)</BoxIdentifier>
 				<BoxOutputIndex>0</BoxOutputIndex>
 			</Source>
 			<Target>
-				<BoxIdentifier>(0x7336bd23, 0x72e0178a)</BoxIdentifier>
+				<BoxIdentifier>(0x7336bd23, 0x72e0178b)</BoxIdentifier>
 				<BoxInputIndex>0</BoxInputIndex>
 			</Target>
 		</Link>
@@ -1199,6 +1195,17 @@
 			<Target>
 				<BoxIdentifier>(0x10ce2e77, 0x655226bf)</BoxIdentifier>
 				<BoxInputIndex>2</BoxInputIndex>
+			</Target>
+		</Link>
+		<Link>
+			<Identifier>(0x3df5f55e, 0x06b0de67)</Identifier>
+			<Source>
+				<BoxIdentifier>(0x7336bd23, 0x72e0178b)</BoxIdentifier>
+				<BoxOutputIndex>0</BoxOutputIndex>
+			</Source>
+			<Target>
+				<BoxIdentifier>(0x0000565b, 0x00006696)</BoxIdentifier>
+				<BoxInputIndex>0</BoxInputIndex>
 			</Target>
 		</Link>
 		<Link>
