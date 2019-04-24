@@ -16,7 +16,7 @@ Run`mi-csp-0-signal-monitoring.xml` -- also possible check impedance through Ope
 
 Acquisition: launch tux, launch scenario `mi-csp-1-acquisition.xml` until end circuit. Two times.
 
-Concatenation: run `concatenate.R`
+Concatenation: run `concatenate.R` (cd to script directory first)
 
 Select frequency: scenario `mi-csp-1bis-frequencyBandSelection.xml`
 

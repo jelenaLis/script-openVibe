@@ -8,7 +8,7 @@ datasetFolder<-"./signals/";
 # file format recorded during calibration
 datasetPattern<-"motor-imagery-csp-1-acquisition-.*_EEG\\.gdf";
 
-# the label and signal CSV files are written here
+# the signal files are written here
 outputFolder<-"./signals/";
 outputFilename<-"concatenated_training.gdf"
 
