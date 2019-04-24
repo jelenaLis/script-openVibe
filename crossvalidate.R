@@ -1,11 +1,5 @@
-####
-#### Runs openvibe on a previously generated crossvalidation folding
-####
-#### See README.txt
-#####
-#### jtlindgren feb2015
-####
-
+# Runs openvibe on a previously generated crossvalidation folding
+# jtlindgren feb2015
 
 # Clean memory
 rm(list=ls())
@@ -15,13 +9,13 @@ g_Designer<-"ov-designer-2.2";
 
 #g_NoGui<-"";
 
-g_TrainScenarios<-c("motor-imagery-CSP/mi-csp-2-train-CSP.xml", "motor-imagery-CSP/mi-csp-3-classifier-trainer.xml"); # can be any number of them, run in order of listing
-g_TestScenario<-"motor-imagery-CSP/mi-csp-5-replay.xml";
+g_TrainScenarios<-c("cross_valid/mi-csp-2-train-CSP.xml", "cross_valid/mi-csp-3-classifier-trainer.xml"); # can be any number of them, run in order of listing
+g_TestScenario<-"cross_valid/mi-csp-5-replay.xml";
 
 #### should be nothing to modify below this
 
 # load the folding
-fn<-sprintf("fold_info.RData");
+fn<-sprintf("cross_valid/fold_info.RData");
 load(file=fn);
 		
 # crossvalidate

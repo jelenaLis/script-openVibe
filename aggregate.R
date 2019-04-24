@@ -1,15 +1,10 @@
-####
-#### Aggregates crossvalidation results
-####
-#### See README.txt
-#####
-#### jtlindgren feb2015
-####
+# Aggregates crossvalidation results
+# jtlindgren feb2015
 
 rm(list=ls())
 
 #g_ResultsFile<-"experiment_info.RData";
-g_ResultsFile<-"fold_info.RData";
+g_ResultsFile<-"cross_valid/fold_info.RData";
 
 #### should be nothing to modify below this
 

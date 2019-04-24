@@ -20,7 +20,9 @@ Concatenation: run `concatenate.R` (cd to script directory first)
 
 ## Cross-validation
 
-Run `extract-labels.R`
+NB: most of the code is takef from http://openvibe.inria.fr/tutorial-how-to-cross-validate-better/ ; see original scripts for more info
+
+Run `extract-labels.R`, `generate-folding.R`, `crossvalidate.R`, `aggregate.R`.
 
 ## Machine learning
 
