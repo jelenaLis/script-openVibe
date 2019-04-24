@@ -12,11 +12,17 @@ Launch OpenViBE server, select liveamp driver, 32 electrodes, 500 Hz, with accel
 
 Run`mi-csp-0-signal-monitoring.xml` -- also possible check impedance through OpenViBE server.
 
-## Calibration 
+## Get Calibration data
 
 Acquisition: launch tux, launch scenario `mi-csp-1-acquisition.xml` until end circuit. Two times.
 
 Concatenation: run `concatenate.R` (cd to script directory first)
+
+## Cross-validation
+
+Run `extract-labels.R`
+
+## Machine learning
 
 Select frequency: scenario `mi-csp-1bis-frequencyBandSelection.xml`
 

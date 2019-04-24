@@ -1,4 +1,5 @@
 # For cross-validation, retrieve labels
+# orig: jtlindgren 13mar2015
 
 # Clean memory
 rm(list=ls())

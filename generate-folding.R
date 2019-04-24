@@ -1,10 +1,5 @@
-####
-#### Generates cross-validating folding (filtered label stream timelines), two for each train+test fold pair.
-####
-#### See README.txt
-#####
-#### jtlindgren 13mar2015
-####
+# Generates cross-validating folding (filtered label stream timelines), two for each train+test fold pair.
+# orig: jtlindgren 13mar2015
 
 # Clean memory
 rm(list=ls())
@@ -15,40 +10,30 @@ nFolds<-5;
 # Make sure that each fold has the same amount of each class. requires input data to be balanced (i.e. exactly same number of trials for each class).
 balanceLabels<-TRUE;
 
-# the label and signal files are read from here.
-datasetFolder<-"dataset-converted";
+# assumes index correspondence between the two lists	
+datasetFolder<-"signals"
+labelFile<-"concatenated_training.csv";
+signalFile<-"concatenated_training.gdf";
 
 # filtered timelines (label streams) are written here
-foldsFolder<-"folds";
+foldsFolder<-"cross_valid/folds";
 
 # models are written here
-modelsFolder<-"models";
+modelsFolder<-"cross_valid/models";
 
 # prediction voting are here
-predictionsFolder<-"predictions";
+predictionsFolder<-"cross_valid/predictions";
 
 # numeric markers for OVTK_GDF_LEFT, OVTK_GDF_RIGHT. These are what will be filtered in the label stream.
 classes<-c(769,770)
-	
-# assumes index correspondence between the two lists	
-labelFiles<-dir(datasetFolder,pattern=".*labels.csv");
-signalFiles<-dir(datasetFolder,pattern=".*signal.ov");
+
 
 #### should be nothing to modify below this
 
-if(length(labelFiles) != length(signalFiles))
-{
-	cat("Error: Oops, inequal amount of signal and label files!");
-}
+# dirty hack, script was aimed at several files
+labelFiles <- c(labelFile)
+signalFiles <- c(signalFile)
 
-for(i in 1:length(signalFiles)) {
-	cat("Will pair [", signalFiles[i], "] with [", labelFiles[i], "]\n");
-}
-
-dir.create(foldsFolder, showWarnings = FALSE, recursive=TRUE)
-dir.create(modelsFolder, showWarnings = FALSE, recursive=TRUE)
-dir.create(predictionsFolder, showWarnings = FALSE, recursive=TRUE)
-		
 folds<-list();
 
 cnt<-1;
@@ -137,7 +122,7 @@ for(dsetIdx in 1:length(labelFiles))
 }
 
 # store info needed by later stages
-fn<-sprintf("fold_info.RData");
+fn<-sprintf("cross_valid/fold_info.RData");
 save(file=fn, "folds", "nFolds");
 
 cat("Done.\n");
