@@ -1,8 +1,42 @@
-# script-openVibe
-
 Running the tuxflow experiment, (sometimes) biasing the classifier output to boost flow with a Tux racer game.
 
-Tested with OpenViBE 1.2.1
+# How-to Tux2
+
+Using Brain Products Liveamp, 32 electrodes.
+
+Tested with OpenViBE 2.2.0 with Python 2.7 (windows & linux), R 3.4.4 through RKward (windows & linux).
+
+Launch OpenViBE server, select liveamp driver, 32 electrodes, 500 Hz, with accelerometer. Set drift to 10ms. Use chunk size 4.
+
+## Setup
+
+Run`mi-csp-0-signal-monitoring.xml` -- also possible check impedance through OpenViBE server.
+
+## Calibration 
+
+Acquisition: launch tux, launch scenario `mi-csp-1-acquisition.xml` until end circuit. Two times.
+
+Concatenation: run `concatenate.R`
+
+Select frequency: scenario `mi-csp-1bis-frequencyBandSelection.xml`
+
+Train spatial filter: `mi-csp-2-train-CSP.xml`
+
+Train classifier: `mi-csp-3-classifier-trainer.xml`
+
+## Experiment
+
+During XP: launch LSL2Joy
+
+Between each run: generate new circuit.
+
+For each run, launch Tux, launch `mi-csp-4-online_noadapt.xml`, start track special BCI.
+
+## Bonus
+
+Participant can try regular track through scenario `mi-csp-4bis-online_noadapt_truetrue.xml`.
+
+# Files description
 
 ## OpenViBE files
 
@@ -14,9 +48,6 @@ Taken from classical motor imagery scenarios, also contribution from Jussi Lindg
 * mi-csp-2-train-CSP: train spatial filter
 * mi-csp-3-classifier-trainer: train the (SVM) classifier
 
-* mi-csp-4-online: not used, graz for real
-* mi-csp-4-replay_adapt and mi-csp-4-replay_noadapt: for debugging, use recorded data instead of live signals to control tux
-
 * mi-csp-4-online_noadapt: control tux / record data
 * mi-csp-4-online_adapt: control tux / record data, this version bias the classifier with positive feedback
 
@@ -25,8 +56,7 @@ Taken from classical motor imagery scenarios, also contribution from Jussi Lindg
 ### pyhton files used within scenarios
 
 * python_lsl_stims.py: python box to retrieve stimulation from tux through LSL
-* ov_bias_classifier: enable / disable classifier output in order to limit tux movements
-* ov_bias_adapt_classifier: the same, with a positive feedback bias
+* ov_bias_adapt_classifier_vidaurre.py: center output between run, bias depending of conditions, enable / disable classifier output in order to limit tux movements
 
 ## Folders
 
