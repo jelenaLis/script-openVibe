@@ -18,6 +18,8 @@ Acquisition: launch tux, launch scenario `mi-csp-1-acquisition.xml` until end ci
 
 Concatenation: run `concatenate.R` (cd to script directory first)
 
+Select frequency: scenario `mi-csp-1bis-frequencyBandSelection.xml`
+
 ## Cross-validation
 
 NB: most of the code is takef from http://openvibe.inria.fr/tutorial-how-to-cross-validate-better/ ; see original scripts for more info. CSV Writer/Reader still use deprecated box because the new one at the moment necessitate a (useless here) signal stream, and do not let customize separators. Beware: match "cross_*" OpenViBE scenarios with their "regular" counterparts (e.g. filtering, epoching, etc.).
@@ -25,8 +27,6 @@ NB: most of the code is takef from http://openvibe.inria.fr/tutorial-how-to-cros
 Run `extract-labels.R`, `generate-folding.R`, `crossvalidate.R`, `aggregate.R`.
 
 ## Machine learning
-
-Select frequency: scenario `mi-csp-1bis-frequencyBandSelection.xml`
 
 Train spatial filter: `mi-csp-2-train-CSP.xml`
 
