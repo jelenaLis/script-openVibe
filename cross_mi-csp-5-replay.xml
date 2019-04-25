@@ -34,14 +34,14 @@
 					<TypeIdentifier>(0x512a166f, 0x5c3ef83f)</TypeIdentifier>
 					<Name>offset</Name>
 					<DefaultValue>0.5</DefaultValue>
-					<Value>-0.5</Value>
+					<Value>0</Value>
 					<Modifiability>false</Modifiability>
 				</Setting>
 				<Setting>
 					<TypeIdentifier>(0x512a166f, 0x5c3ef83f)</TypeIdentifier>
 					<Name>duration</Name>
 					<DefaultValue>4.0</DefaultValue>
-					<Value>3.5</Value>
+					<Value>3</Value>
 					<Modifiability>false</Modifiability>
 				</Setting>
 			</Settings>
@@ -1706,15 +1706,16 @@ its signal input to the first output (i.e. routed to a classifier).
 Otherwise, the feature input is redirected to the second output,
 i.e. nothing.
 
-NB: match epoch values with other scripts!</Text>
+NB: match epoch values with other scripts!
+(but does not handle negative offset...)</Text>
 			<Attributes>
 				<Attribute>
 					<Identifier>(0x473d9a43, 0x97fc0a97)</Identifier>
-					<Value>1136</Value>
+					<Value>1216</Value>
 				</Attribute>
 				<Attribute>
 					<Identifier>(0x7234b86b, 0x2b8651a5)</Identifier>
-					<Value>-192</Value>
+					<Value>-160</Value>
 				</Attribute>
 			</Attributes>
 		</Comment>
