@@ -13,8 +13,21 @@ outputFolder<-"./signals/";
 outputFilename<-"concatenated_training.gdf"
 
 g_NoGui<- "--no-gui"; # set to empty "" to see the GUI, good for debugging
-#g_Designer<-"ov-designer-2.2";
-g_Designer<-"C:/Program Files/openvibe-2.2.0-64bit/openvibe-designer.cmd"
+
+# adapt binary location to system
+switch (Sys.info()[['sysname']],
+    Windows= {
+        g_Designer<-"C:/Program Files/openvibe-2.2.0-64bit/openvibe-designer.cmd"
+    },
+    Linux  = {
+        g_Designer<-"ov-designer-2.2";
+    },
+    Darwin = {
+        g_Designer<-"ov-designer-2.2";
+    }
+)
+
+#
 g_Scenario<-"concatenate.xml" 
 
 #### should be nothing to modify below this

@@ -789,6 +789,10 @@
 					<Value>736</Value>
 				</Attribute>
 				<Attribute>
+					<Identifier>(0x341d3912, 0x1478de86)</Identifier>
+					<Value>1</Value>
+				</Attribute>
+				<Attribute>
 					<Identifier>(0x4e7b798a, 0x183beafb)</Identifier>
 					<Value>(0x23ce0a10, 0xc2eabb47)</Value>
 				</Attribute>
