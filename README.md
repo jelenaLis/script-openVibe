@@ -20,7 +20,7 @@ Concatenation: run `concatenate.R` (cd to script directory first)
 
 ## Cross-validation
 
-NB: most of the code is takef from http://openvibe.inria.fr/tutorial-how-to-cross-validate-better/ ; see original scripts for more info
+NB: most of the code is takef from http://openvibe.inria.fr/tutorial-how-to-cross-validate-better/ ; see original scripts for more info. CSV Writer/Reader still use deprecated box because the new one at the moment necessitate a (useless here) signal stream, and do not let customize separators. Beware: match "cross_*" OpenViBE scenarios with their "regular" counterparts (e.g. filtering, epoching, etc.).
 
 Run `extract-labels.R`, `generate-folding.R`, `crossvalidate.R`, `aggregate.R`.
 
@@ -61,6 +61,9 @@ Taken from classical motor imagery scenarios, also contribution from Jussi Lindg
 
 * replayer_adapt.xml: used in ./stats to retrieve online data
 
+* cross_* files: mostly duplicate of regular scenarios, used for cross-validation on calibration
+
+
 ### pyhton files used within scenarios
 
 * python_lsl_stims.py: python box to retrieve stimulation from tux through LSL
@@ -75,6 +78,8 @@ NB: the file "liblsl.so" comes from a previous OpenViBE installation, for conven
 * signals: empty on purpose, OpenViBE will write data in here, also conain most scenarios' output configuration to ease backup.
 
 NB: two files will be recorded : one containing EEG data and the other the output of the classifier (*_EEG.gdf and *_class.gdf respectively). Both have the same stimulations (recorded from tux racer)
+
+* cross_valid: used by scripts handling cross-validation on training sets in order to store temporary files
 
 ### From tux1
 
