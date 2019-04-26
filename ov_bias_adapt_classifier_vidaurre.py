@@ -288,10 +288,12 @@ class MyOVBox(OVBox):
        if self.debug:
          print "output off"
 
-     # new race, reset class values, load previous data
+     # new race, reset class values and scores, load previous data
      elif stim.identifier == self.classRunStartStim:
        self.classAValues = np.array([])
        self.classBValues = np.array([])
+       self.scoreA = 0
+       self.scoreB = 0
        if self.enablePerf:
            self.loadPerf()
        self.setupBias()

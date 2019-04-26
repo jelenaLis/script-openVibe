@@ -24,6 +24,9 @@ modelsFolder<-"cross_valid/models";
 # prediction voting are here
 predictionsFolder<-"cross_valid/predictions";
 
+# classifier output is here
+classoutputFolder<-"cross_valid/class-output";
+
 # numeric markers for OVTK_GDF_LEFT, OVTK_GDF_RIGHT. These are what will be filtered in the label stream.
 classes<-c(769,770)
 
@@ -76,6 +79,7 @@ for(dsetIdx in 1:length(labelFiles))
 	testFiles<-rep("",nFolds);
 	modelFiles<-rep("",nFolds);
 	predictionFiles<-rep("", nFolds);
+	classoutputFiles<-rep("", nFolds);
 	for(i in 1:nFolds) {
 		test<-idxs[folding==i];
 		train<-idxs[folding!=i];
@@ -106,14 +110,20 @@ for(dsetIdx in 1:length(labelFiles))
 
 		# preduction output
 		fn<-sprintf("%s/%s-fold%02d_vote.csv", predictionsFolder, labelFile, i);
-		predictionFiles[i]<-fn;				
+		predictionFiles[i]<-fn;
+		
+		# classifier output
+		fn<-sprintf("%s/%s-fold%02d_vote.csv", classoutputFolder, labelFile, i);
+		classoutputFiles[i]<-fn;	
 	}
 	folds[[cnt]]<-list();
 	folds[[cnt]]$signalFile<-sprintf("%s/%s", datasetFolder, signalFiles[dsetIdx]);		
 	folds[[cnt]]$trainFiles<-trainFiles;
 	folds[[cnt]]$testFiles<-testFiles;
     folds[[cnt]]$modelFiles<-modelFiles;
-    folds[[cnt]]$predictionFiles<-predictionFiles;	
+    folds[[cnt]]$predictionFiles<-predictionFiles;
+    folds[[cnt]]$classoutputFiles<-classoutputFiles;	
+
 	folds[[cnt]]$classes<-classes;
 	
 	cnt<-cnt+1;

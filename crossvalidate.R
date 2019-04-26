@@ -5,7 +5,19 @@
 rm(list=ls())
 
 g_NoGui<-"--no-gui"; # set to empty ""  to see the GUI, good for debugging
-g_Designer<-"ov-designer-2.2";
+
+# adapt binary location to system
+switch (Sys.info()[['sysname']],
+    Windows= {
+        g_Designer<-"C:/Program Files/openvibe-2.2.0-64bit/openvibe-designer.cmd"
+    },
+    Linux  = {
+        g_Designer<-"ov-designer-2.2";
+    },
+    Darwin = {
+        g_Designer<-"ov-designer-2.2";
+    }
+)
 
 #g_NoGui<-"";
 
@@ -28,6 +40,8 @@ for(dsetIdx in 1:length(folds))
 		signalFile<-folds[[dsetIdx]]$signalFile;
 		modelFile<-folds[[dsetIdx]]$modelFiles[foldIdx];
 		predictionFile<-folds[[dsetIdx]]$predictionFiles[foldIdx];
+		classoutputFile<-folds[[dsetIdx]]$classoutputFiles[foldIdx];
+
 		
 		cat("Dataset# ", dsetIdx, ", signal [", signalFile, "] train [", trainFile, "] test [", testFile, "] output model [", modelFile, "]\n");
 
@@ -42,8 +56,8 @@ for(dsetIdx in 1:length(folds))
 		}
 		
 		cat("Testing fold ", foldIdx, " ...\n");
-		cmd<-sprintf("\"%s\" -d User_Signal %s -d User_TestFold %s -d User_Model %s -d User_Prediction %s --no-session-management %s --play-fast %s",
-			g_Designer, signalFile, testFile, modelFile, predictionFile, g_NoGui, g_TestScenario);
+		cmd<-sprintf("\"%s\" -d User_Signal %s -d User_TestFold %s -d User_Model %s -d User_Prediction %s -d Perf_File %s --no-session-management %s --play-fast %s",
+			g_Designer, signalFile, testFile, modelFile, predictionFile, classoutputFile, g_NoGui, g_TestScenario);
 		cat(cmd,"\n"); flush.console();
 		system(cmd);
 		flush.console();
