@@ -24,6 +24,8 @@ Select frequency: scenario `mi-csp-1bis-frequencyBandSelection.xml`
 
 NB: most of the code is takef from http://openvibe.inria.fr/tutorial-how-to-cross-validate-better/ ; see original scripts for more info. CSV Writer/Reader still use deprecated box because the new one at the moment necessitate a (useless here) signal stream, and do not let customize separators. Beware: match "cross_*" OpenViBE scenarios with their "regular" counterparts (e.g. filtering, epoching, etc.).
 
+Requires "XML" library installed on R.
+
 Run `extract-labels.R`, `generate-folding.R`, `crossvalidate.R`, `aggregate.R`.
 
 ## Machine learning
