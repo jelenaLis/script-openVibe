@@ -35,7 +35,7 @@ g_Scenario<-"concatenate.xml"
 outputSignal <- paste(outputFolder, outputFilename, sep="")
 
 if (file.exists(outputSignal)) {
-    stop(sprintf("Output file [%s] already exists, abort to prevent overwite.\n", outputSignal))
+    stop(sprintf("Output file [%s] already exists, abort to prevent overwrite.\n", outputSignal))
 }
 
 # retriving list of files, check that we only get two

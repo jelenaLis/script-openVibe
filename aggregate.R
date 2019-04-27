@@ -6,10 +6,18 @@ rm(list=ls())
 # the one external dependency
 require(XML)
 
-#g_ResultsFile<-"experiment_info.RData";
+# meta info as during fold creation
 g_ResultsFile<-"cross_valid/fold_info.RData";
 
+# will output there metrics related to the datasets, e.g. accuracy and class output
+# NB: meant for one dataset
+outputFile<-"signals/concatenated_training_metrics.xml"
+
 #### should be nothing to modify below this
+
+if (file.exists(outputFile)) {
+    stop(sprintf("Output file [%s] already exists, abort to prevent overwrite.\n", outputFile))
+}
 
 load(file=g_ResultsFile);
 
@@ -88,8 +96,27 @@ cat("Mean of accs: ", mean(accuracies), ", var ", var(accuracies), "\n")
 
 cat("Mean of confidences: ", mean(confidences), ", var " , var(confidences), "\n");
 
-cat("Means of classifier outputs for first class: ", meansA, "\n");
+cat("Means of classifier outputs for first class: ", meansA, ", overall: ", mean(meansA), "\n");
 
-cat("Means of classifier output for second class: ", meansB, "\n");
+cat("Means of classifier output for second class: ", meansB, ", overall: ", mean(meansB), "\n");
 
+cat("Output metrics to. ", outputFile, "\n");
+fileConn<-file(outputFile)
+writeLines(c(
+    "<subject>", 
+    "<classA>",
+    as.character(mean(meansA)),
+    "</classA>",
+    "<classB>",
+    as.character(mean(meansB)),
+    "</classB>",
+    "<accuracy>",
+    as.character(mean(accuracies)),
+    "</accuracy>",
+    "<confidence>",
+    as.character(mean(confidences)),
+    "</confidence>",
+    "</subject>"
+), fileConn)
+close(fileConn)
 

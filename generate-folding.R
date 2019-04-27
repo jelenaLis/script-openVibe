@@ -113,7 +113,7 @@ for(dsetIdx in 1:length(labelFiles))
 		predictionFiles[i]<-fn;
 		
 		# classifier output
-		fn<-sprintf("%s/%s-fold%02d_vote.xml", classoutputFolder, labelFile, i);
+		fn<-sprintf("%s/%s-fold%02d_classoutput.xml", classoutputFolder, labelFile, i);
 		classoutputFiles[i]<-fn;	
 	}
 	folds[[cnt]]<-list();
