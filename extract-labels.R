@@ -2,7 +2,7 @@
 # orig: jtlindgren 13mar2015
 
 # Clean memory
-rm(list=ls())
+#rm(list=ls())
 
 # GDF files are read from here. In this version, only expect concatenated file of one participant
 signalFile<-"./signals/concatenated_training.gdf";

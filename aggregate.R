@@ -1,7 +1,8 @@
 # Aggregates crossvalidation results
 # jtlindgren feb2015
 
-rm(list=ls())
+# clean memory
+#$rm(list=ls())
 
 # the one external dependency
 require(XML)

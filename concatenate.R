@@ -1,7 +1,7 @@
 # Concatenate GDF files recording during training (2 per subject)
 
 # Clean memory
-rm(list=ls())
+#rm(list=ls())
 
 # GDF files are read from here. In this version, only expect one participant, whose files during calibration are named motor-imagery-csp-1-acquisition-[2016.08.04-15.55.00].gdf
 datasetFolder<-"./signals/";

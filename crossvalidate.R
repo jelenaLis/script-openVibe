@@ -2,7 +2,7 @@
 # jtlindgren feb2015
 
 # Clean memory
-rm(list=ls())
+#rm(list=ls())
 
 g_NoGui<-"--no-gui"; # set to empty ""  to see the GUI, good for debugging
 

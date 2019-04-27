@@ -2,7 +2,7 @@
 # orig: jtlindgren 13mar2015
 
 # Clean memory
-rm(list=ls())
+#rm(list=ls())
 
 # Number of folds
 nFolds<-5;
