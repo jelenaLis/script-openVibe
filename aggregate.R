@@ -97,9 +97,9 @@ cat("Mean of accs: ", mean(accuracies), ", var ", var(accuracies), "\n")
 
 cat("Mean of confidences: ", mean(confidences), ", var " , var(confidences), "\n");
 
-cat("Means of classifier outputs for first class: ", meansA, ", overall: ", mean(meansA), "\n");
+cat("Means of classifier outputs for first class: ", meansA, ", overall: ", mean(meansA), ", amplitude (first dataset only): ", max(classAs) - min(classAs),"\n");
 
-cat("Means of classifier output for second class: ", meansB, ", overall: ", mean(meansB), "\n");
+cat("Means of classifier output for second class: ", meansB, ", overall: ", mean(meansB), ", amplitude (first dataset only): ", max(classBs) - min(classBs), "\n");
 
 cat("Output metrics to. ", outputFile, "\n");
 fileConn<-file(outputFile)
@@ -117,6 +117,13 @@ writeLines(c(
     "<confidence>",
     as.character(mean(confidences)),
     "</confidence>",
+    # FIXME: will work only for last dataset...
+    "<classAamplitude>",
+    as.character(max(classAs) - min(classAs)),
+    "</classAamplitude>",
+    "<classBamplitude>",
+    as.character(max(classBs) - min(classBs)),
+    "</classBamplitude>",
     "</subject>"
 ), fileConn)
 close(fileConn)
