@@ -563,7 +563,7 @@
 		</Box>
 		<Box>
 			<Identifier>(0x414b4b1b, 0x3b7211fb)</Identifier>
-			<Name>biased output</Name>
+			<Name>3</Name>
 			<AlgorithmClassIdentifier>(0x361722e8, 0x311574e8)</AlgorithmClassIdentifier>
 			<Inputs>
 				<Input>
@@ -582,7 +582,7 @@
 					<TypeIdentifier>(0x79a9edeb, 0x245d83fc)</TypeIdentifier>
 					<Name>Channel List</Name>
 					<DefaultValue>:</DefaultValue>
-					<Value>4</Value>
+					<Value>3</Value>
 					<Modifiability>false</Modifiability>
 				</Setting>
 				<Setting>
@@ -916,7 +916,7 @@
 					<TypeIdentifier>(0x2cdb2f0b, 0x12f231ea)</TypeIdentifier>
 					<Name>Performance computations</Name>
 					<DefaultValue>true</DefaultValue>
-					<Value>true</Value>
+					<Value>false</Value>
 					<Modifiability>false</Modifiability>
 				</Setting>
 				<Setting>
@@ -965,7 +965,7 @@
 					<TypeIdentifier>(0x2cdb2f0b, 0x12f231ea)</TypeIdentifier>
 					<Name>Center</Name>
 					<DefaultValue>false</DefaultValue>
-					<Value>true</Value>
+					<Value>false</Value>
 					<Modifiability>false</Modifiability>
 				</Setting>
 				<Setting>
@@ -979,7 +979,7 @@
 					<TypeIdentifier>(0x2cdb2f0b, 0x12f231ea)</TypeIdentifier>
 					<Name>Fake output</Name>
 					<DefaultValue>false</DefaultValue>
-					<Value>true</Value>
+					<Value>false</Value>
 					<Modifiability>false</Modifiability>
 				</Setting>
 			</Settings>

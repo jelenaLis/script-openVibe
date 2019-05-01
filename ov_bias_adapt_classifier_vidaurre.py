@@ -4,6 +4,47 @@ import datetime
 import os.path
 import math, random
 
+from scipy.stats import beta
+
+
+# lowest expected value -- e.g. lowest accuracy
+minn = 0.5
+# highest expected value -- e.g. highest accuracy
+maxx = 1
+
+# lower and upper border for the beta functions that will serve as bias for input (minn to maxx)
+shift_min = 0.2
+shift_max = 0.5
+
+# set to -1 to inverse alpha and beta and at the same time reverse accuracies
+# positive bias has more influence over lower accuracies
+# negative bias has less influence over lower accuracies
+inverse = 1
+
+# accuracy of participant
+acc = 0.8
+
+def bias_beta(x, acc, minn, maxx, shift_min, shift_max, inverse):
+    # remap input to 0..1
+    if (maxx == minn):
+        remap = 0
+    else:
+        remap = (acc - minn) / (maxx - minn)
+    # will help to re-order input: 0.5 is the middle between 0..1 used in remap
+    # if inverse is "1" remap is not changed; if inverse is "-1" 0..1 becomes 1..0
+    mid = 0.5
+    base = mid + mid * inverse
+    reorder =  (base - inverse * remap)
+    # shift to desired range
+    shift = shift_min + reorder * (shift_max - shift_min)
+    # alpha and beta parameters for the beta cumulative distribution function
+    a = (1 - shift * inverse) 
+    b = (1 + shift * inverse) 
+    return beta.cdf(x, a, b)
+
+
+
+
 # Bias (or not) input coming from the classifier. class A should be -1 and class B 1, implementing (roughly) Vidaurre et al. "Toward Unsupervised Adaptation of LDA for Brain-Computer Interfaces"
 # FIXME: might not work if input's actual frequency is higher than box's frequency
 # NB: based on ov_bias_adapt_classifier.py, based on IBI script from Tobe
@@ -350,9 +391,26 @@ class MyOVBox(OVBox):
          
        # bias depending on current class
        if self.currentClass == 1: #1st class is -1
-           self.lastBiasValue = self.lastCenterValue - 0.5
+            # remap to 0..1
+            x = ((self.lastCenterValue * -1) + 1) / 2
+            bias = bias_beta(x, acc, minn, maxx, shift_min, shift_max, inverse)
+            # remap to -1 .. 1
+            self.lastBiasValue = (bias * 2 - 1)*-1
+            print("input: ", self.lastCenterValue)
+            print("remap: ", x)
+            print("bias: ", bias)
+            print("output: ", self.lastBiasValue)
+
        elif self.currentClass == 2:
-           self.lastBiasValue = self.lastCenterValue + 0.5
+            # remap to 0..1
+            x = (self.lastCenterValue + 1) / 2
+            bias = bias_beta(x, acc, minn, maxx, shift_min, shift_max, inverse)
+            # remap to -1 .. 1
+            self.lastBiasValue = bias * 2 - 1
+            print("input: ", self.lastCenterValue)
+            print("remap: ", x)
+            print("bias: ", bias)
+            print("output: ", self.lastBiasValue)
        else: # no active class, no bias
            self.lastBiasValue = self.lastCenterValue
 
