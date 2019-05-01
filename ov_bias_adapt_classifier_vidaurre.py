@@ -128,6 +128,8 @@ class MyOVBox(OVBox):
       self.biasAcc = DEFAULT_ACCURACY
       # save/load perf (if disabled will not even gather data about class output)
       self.enablePerf = True
+      # will be used to repeatidely print info message about current bias
+      self.gotAccuracy = False
 
       # value to add to current run to center output
       self.biasCenter = 0
@@ -201,7 +203,21 @@ class MyOVBox(OVBox):
       # load accuracy data if will adapt
       if self.enableAdapt:
           self.loadAcc()
+    
+      self.printInfos()
 
+   def printInfos(self):
+       print("\t===")
+       if self.enableCenter:
+           print("\tCenter with biasCenter: %f (foundPerf: %r)" % (self.biasCenter, self.gotPreviousRun))
+       if self.enableAdapt and not self.biasNegative:
+           print("\tAdapt positive with acc %f (foundAcc: %r, min: %f, max: %f)" % (self.biasAcc, self.gotAccuracy, MIN_ACCURACY, MAX_ACCURACY))
+       elif self.enableAdapt and self.biasNegative:
+           print("\tAdapt negative with acc %f (foundAcc: %r, min: %f, max: %f)" % (self.biasAcc, self.gotAccuracy, MIN_ACCURACY, MAX_ACCURACY))
+       if self.enableFake:
+           print("\tFake output")
+       print("\t===")
+       
    # the center bias that should be applied
    # apply formula to bias current run from previous classifier output (median of each class)
    def setupBias(self):
@@ -246,8 +262,9 @@ class MyOVBox(OVBox):
       except:
           print "!! Error, parsing XML !!"
           return
-
-      print "Accuracy:", self.biasAcc
+      
+      print "Found accuracy:", self.biasAcc
+      self.gotAccuracy = True
        
    # read data from last run
    def loadPerf(self):
@@ -380,6 +397,7 @@ class MyOVBox(OVBox):
        if self.enablePerf:
            self.loadPerf()
        self.setupBias()
+       self.printInfos()
      # race completed, save values
      elif stim.identifier == self.classRunStopStim and self.enablePerf:
        self.savePerf()
