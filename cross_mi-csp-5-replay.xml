@@ -1590,6 +1590,13 @@
 				</Setting>
 				<Setting>
 					<TypeIdentifier>(0x330306dd, 0x74a95f98)</TypeIdentifier>
+					<Name>Accuracy data</Name>
+					<DefaultValue>${Player_ScenarioDirectory}/signals/concatenated_training_metrics.xml</DefaultValue>
+					<Value>${Player_ScenarioDirectory}/signals/concatenated_training_metrics.xml</Value>
+					<Modifiability>false</Modifiability>
+				</Setting>
+				<Setting>
+					<TypeIdentifier>(0x330306dd, 0x74a95f98)</TypeIdentifier>
 					<Name>Performance backup</Name>
 					<DefaultValue>${Player_ScenarioDirectory}/run_perfs_[$core{date}-$core{time}].cfg</DefaultValue>
 					<Value>${Perf_File}</Value>
@@ -1635,6 +1642,13 @@
 					<Name>Adapt</Name>
 					<DefaultValue>false</DefaultValue>
 					<Value>false</Value>
+					<Modifiability>false</Modifiability>
+				</Setting>
+				<Setting>
+					<TypeIdentifier>(0x2cdb2f0b, 0x12f231ea)</TypeIdentifier>
+					<Name>Bias negative</Name>
+					<DefaultValue>false</DefaultValue>
+					<Value>true</Value>
 					<Modifiability>false</Modifiability>
 				</Setting>
 				<Setting>

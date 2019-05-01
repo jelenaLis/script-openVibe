@@ -1,49 +1,8 @@
 import numpy as np
 import xml.etree.ElementTree as ET
 import datetime
-import os.path
 import math, random
-
 from scipy.stats import beta
-
-
-# lowest expected value -- e.g. lowest accuracy
-minn = 0.5
-# highest expected value -- e.g. highest accuracy
-maxx = 1
-
-# lower and upper border for the beta functions that will serve as bias for input (minn to maxx)
-shift_min = 0.2
-shift_max = 0.5
-
-# set to -1 to inverse alpha and beta and at the same time reverse accuracies
-# positive bias has more influence over lower accuracies
-# negative bias has less influence over lower accuracies
-inverse = 1
-
-# accuracy of participant
-acc = 0.8
-
-def bias_beta(x, acc, minn, maxx, shift_min, shift_max, inverse):
-    # remap input to 0..1
-    if (maxx == minn):
-        remap = 0
-    else:
-        remap = (acc - minn) / (maxx - minn)
-    # will help to re-order input: 0.5 is the middle between 0..1 used in remap
-    # if inverse is "1" remap is not changed; if inverse is "-1" 0..1 becomes 1..0
-    mid = 0.5
-    base = mid + mid * inverse
-    reorder =  (base - inverse * remap)
-    # shift to desired range
-    shift = shift_min + reorder * (shift_max - shift_min)
-    # alpha and beta parameters for the beta cumulative distribution function
-    a = (1 - shift * inverse) 
-    b = (1 + shift * inverse) 
-    return beta.cdf(x, a, b)
-
-
-
 
 # Bias (or not) input coming from the classifier. class A should be -1 and class B 1, implementing (roughly) Vidaurre et al. "Toward Unsupervised Adaptation of LDA for Brain-Computer Interfaces"
 # FIXME: might not work if input's actual frequency is higher than box's frequency
@@ -69,8 +28,50 @@ FAKE_BASE_VALUE = 0.7
 FAKE_NOISE_STD = 0.1
 # how often the direction might change depending on accuracy (in seconds)
 FAKE_DIRECTION_CHANGE = 0.5
-
 #FIXME: faking depends on sampling rate and chunk size (how often noise is computed)
+
+# for bias beta, range of the possible accuracies (will clip if outside): 
+MIN_ACCURACY = 0.5
+MAX_ACCURACY = 1
+# if cannot load accuracy
+DEFAULT_ACCURACY = 0.75
+
+def bias_beta(x, acc=DEFAULT_ACCURACY, negative=False, minn=MIN_ACCURACY, maxx=MAX_ACCURACY, shift_min=0.2, shift_max=0.5):
+    """
+    x: probability, should be between 0 and 1, in this context classifier output
+    acc: influences the strength of the bias; supposed to be classification accuracy of participant during calibration
+    negative: set to True to create a negative bias; will inverse alpha and beta and at the same time reverse accuracies
+        negative == False: positive bias has more influence over lower accuracies
+        negative == True: negative bias has less influence over lower accuracies
+    minn:lowest expected value for acc -- e.g. lowest accuracy
+    maxx: highest expected value acc -- e.g. highest accuracy
+    shift_min, shift_max: lower and upper border for the beta functions that will serve as bias for acc (minn to maxx)
+    """
+    # safety check
+    if acc > maxx:
+        acc = maxx
+    elif acc < minn:
+        acc = minn
+    if negative:
+        inverse = -1
+    else:
+        inverse = 1
+    # remap change in accuracie to 0..1
+    if (maxx == minn):
+        remap = 0
+    else:
+        remap = (acc - minn) / (maxx - minn)
+    # will help to re-order input: 0.5 is the middle between 0..1 used in remap
+    # if inverse is "1" remap is not changed; if inverse is "-1" 0..1 becomes 1..0
+    mid = 0.5
+    base = mid + mid * inverse
+    reorder =  (base - inverse * remap)
+    # shift to desired range
+    shift = shift_min + reorder * (shift_max - shift_min)
+    # alpha and beta parameters for the beta cumulative distribution function
+    a = (1 - shift * inverse) 
+    b = (1 + shift * inverse) 
+    return beta.cdf(x, a, b)
 
 class MyOVBox(OVBox):
    def __init__(self):
@@ -102,6 +103,8 @@ class MyOVBox(OVBox):
       # where to read/save performance data
       self.perfFile = ""
       self.perfFileBackup = ""
+      # where to read accuracy data
+      self.accFile = ""
 
       # commands only during trials -- code 1 for class A and 2 for class B; -1 if no current trial
       self.currentClass = -1
@@ -120,6 +123,9 @@ class MyOVBox(OVBox):
       # enable / disable functionalities
       self.enableCenter = False
       self.enableAdapt = False
+      self.biasNegative = False
+      #  will hold player accuracy
+      self.biasAcc = DEFAULT_ACCURACY
       # save/load perf (if disabled will not even gather data about class output)
       self.enablePerf = True
 
@@ -142,6 +148,9 @@ class MyOVBox(OVBox):
       # flags for enabling / disabling center and adapt biases
       self.enableCenter = (self.setting['Center']=="true")
       self.enableAdapt = (self.setting['Adapt']=="true")
+      # if set, will bias negatively in the "adapt" condition
+      self.biasNegative = (self.setting['Bias negative']=="true")
+
       self.enablePerf = (self.setting['Performance computations']=="true")
       self.enableFake = (self.setting['Fake output']=="true")
 
@@ -186,7 +195,8 @@ class MyOVBox(OVBox):
       self.perfFile = self.setting['Performance data']
       # this one should possess timestamps in order to create new file each time upon save
       self.perfFileBackup = self.setting['Performance backup']
-
+      # retrieve filename for accuracies
+      self.accFile = self.setting['Accuracy data']
 
    # the center bias that should be applied
    # apply formula to bias current run from previous classifier output (median of each class)
@@ -389,28 +399,18 @@ class MyOVBox(OVBox):
            self.lastBiasValue = self.lastCenterValue
            return
          
-       # bias depending on current class
-       if self.currentClass == 1: #1st class is -1
-            # remap to 0..1
-            x = ((self.lastCenterValue * -1) + 1) / 2
-            bias = bias_beta(x, acc, minn, maxx, shift_min, shift_max, inverse)
+       # bias depending on current class. 1st class is -1; 2nd class is 1
+       if self.currentClass > 0:
+            # we must remap input differently is the class is -1 or 1
+            if self.currentClass == 1:
+                reverse = -1
+            else:
+                reverse = 1           
+            # remap to 0..1, with 1 currentClass
+            x = ((self.lastCenterValue * reverse) + 1) / 2
+            bias = bias_beta(x, self.biasAcc, self.biasNegative)
             # remap to -1 .. 1
-            self.lastBiasValue = (bias * 2 - 1)*-1
-            print("input: ", self.lastCenterValue)
-            print("remap: ", x)
-            print("bias: ", bias)
-            print("output: ", self.lastBiasValue)
-
-       elif self.currentClass == 2:
-            # remap to 0..1
-            x = (self.lastCenterValue + 1) / 2
-            bias = bias_beta(x, acc, minn, maxx, shift_min, shift_max, inverse)
-            # remap to -1 .. 1
-            self.lastBiasValue = bias * 2 - 1
-            print("input: ", self.lastCenterValue)
-            print("remap: ", x)
-            print("bias: ", bias)
-            print("output: ", self.lastBiasValue)
+            self.lastBiasValue = (bias * 2 - 1) * reverse
        else: # no active class, no bias
            self.lastBiasValue = self.lastCenterValue
 
