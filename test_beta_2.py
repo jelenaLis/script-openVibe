@@ -26,12 +26,24 @@ shift = 0.2
 #f = 0.5
 density = 0.5
 
+# set to -1 to inverse alpha and beta and at the same time reverse accuracies
+# positive bias has more influence over lower accuracies
+# negative bias has less influence over lower accuracies
 inverse = 1
 
-target =  1
+# FIXME: use minn and maxx as range between "shift" and ???. At the moment touching minn or maxx will shift the whole fuction.
+# lowest expected value -- e.g. lowest accuracy
+minn = 0.5
+# highest expected value -- e.g. highest accuracy
+maxx = 1
 
-for c in np.linspace(0.5, 1, 10):
-    cbis =  ((target - inverse * c) * density + shift) 
+
+for c in np.linspace(minn, maxx, 10):
+    mid = (minn + maxx) / 2
+    base = mid - minn + mid * inverse
+    # positif: max == 1
+    # negatif: max == -0.5
+    cbis =  ((base - inverse * c) * density + shift) 
     
     a = (1 - cbis * inverse) 
     b = (1 + cbis * inverse)
