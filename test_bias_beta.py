@@ -29,8 +29,10 @@ if __name__ == "__main__":
     maxx = 1
     
     # lower and upper border for the beta functions that will serve as bias for input (minn to maxx)
-    shift_min = 0.2
-    shift_max = 0.5
+    # fixed value to have save bias no matter the accuracy
+    # with 0.33, ratio alpha/beta will be about 0.5
+    shift_min = 0.33 # 0.2
+    shift_max = 0.33 # 0.5
     
     # set to -1 to inverse alpha and beta and at the same time reverse accuracies
     # positive bias has more influence over lower accuracies
@@ -55,4 +57,4 @@ if __name__ == "__main__":
     
     # test accuracy of participant
     for acc in np.linspace(minn, maxx, nb_val):
-        ax.plot(x, bias_beta(x, acc minn, maxx, shift_min, shift_max, inverse),  color=next(colors))
+        ax.plot(x, bias_beta(x, acc, minn, maxx, shift_min, shift_max, inverse),  color=next(colors))

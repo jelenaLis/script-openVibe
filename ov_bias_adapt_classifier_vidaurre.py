@@ -35,8 +35,13 @@ MIN_ACCURACY = 0.5
 MAX_ACCURACY = 1
 # if cannot load accuracy
 DEFAULT_ACCURACY = 0.75
+# lower and upper border for the beta functions that will serve as default bias for input (minn to maxx)
+# fixed value to have save bias no matter the accuracy
+# with 0.33, ratio alpha/beta will be about 0.5
+SHIFT_MIN = 0.33 # 0.2
+SHIFT_MAX = 0.33 # 0.5
 
-def bias_beta(x, acc=DEFAULT_ACCURACY, negative=False, minn=MIN_ACCURACY, maxx=MAX_ACCURACY, shift_min=0.2, shift_max=0.5):
+def bias_beta(x, acc=DEFAULT_ACCURACY, negative=False, minn=MIN_ACCURACY, maxx=MAX_ACCURACY, shift_min=SHIFT_MIN, shift_max=SHIFT_MAX):
     """
     x: probability, should be between 0 and 1, in this context classifier output
     acc: influences the strength of the bias; supposed to be classification accuracy of participant during calibration
