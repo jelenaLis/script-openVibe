@@ -35,9 +35,9 @@ runOV("mi-csp-2-train-CSP.xml")
 runOV("mi-csp-3-classifier-trainer.xml")
 
 # data for cross-validation
-source("extract-labels.R")
-source("generate-folding.R")
-source("crossvalidate.R")
-source("aggregate.R")
+#source("extract-labels.R")
+#source("generate-folding.R")
+#source("crossvalidate.R")
+#source("aggregate.R")
 
 
