@@ -1,6 +1,8 @@
 import numpy
 from Tkinter import *
 
+# Code: Jelena Mladenovic & Jeremy Frey
+
 # ripoff from the regular version, here only one channel shown, keep parameters but do not use maxValue
 # TODO: merge with regular...
 

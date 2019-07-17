@@ -4,6 +4,8 @@ import datetime
 import math, random
 from scipy.stats import beta
 
+# Code: Jelena Mladenovic & Jeremy Frey
+
 # Bias (or not) input coming from the classifier. class A should be -1 and class B 1, implementing (roughly) Vidaurre et al. "Toward Unsupervised Adaptation of LDA for Brain-Computer Interfaces"
 # FIXME: might not work if input's actual frequency is higher than box's frequency
 # NB: based on ov_bias_adapt_classifier.py, based on IBI script from Tobe
